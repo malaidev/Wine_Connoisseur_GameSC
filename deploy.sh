@@ -1,10 +1,12 @@
-# npx hardhat run --network avaxfuji scripts/deployGrape.ts
+# fuji grape address 0x623D9AbaAfc855090A5F28C839A1aa82ebA94987
+
+# npx hardhat run --network avaxfuji scripts/deployVintageWine.ts
 # npx hardhat verify --network avaxfuji
 
 echo "DEPLOY"
 echo ""
 rm -rf cache && rm -rf artifacts
-CMD="npx hardhat run --network avaxfuji scripts/deployGrape.ts"
+CMD="npx hardhat run --network avaxfuji scripts/deployVintageWine.ts"
 echo "CMD: $CMD"
 output=`eval $CMD`
 echo "output: $output"

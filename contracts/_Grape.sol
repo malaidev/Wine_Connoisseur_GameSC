@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Supply cap of 15,000,000
-contract Grape is ERC20Capped(15_000_000 * 1e18), Ownable {
+contract _Grape is ERC20Capped(15_000_000 * 1e18), Ownable {
 
     address public upgradeAddress;
     address public wineryAddress;

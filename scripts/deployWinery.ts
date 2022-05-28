@@ -1,30 +1,30 @@
-import { ethers, upgrades } from "hardhat";
+import { ethers, upgrades } from 'hardhat'
 
 async function main(): Promise<string> {
-  const [deployer] = await ethers.getSigners();
-  if (deployer === undefined) throw new Error("Deployer is undefined.");
+  const [deployer] = await ethers.getSigners()
+  if (deployer === undefined) throw new Error('Deployer is undefined.')
 
-  console.log("Account balance:", (await deployer.getBalance()).toString());
+  console.log('Account balance:', (await deployer.getBalance()).toString())
 
-  const Winery = await ethers.getContractFactory("Winery");
+  const Winery = await ethers.getContractFactory('Winery')
   //   const WineryDeployed = await Winery.deploy();
   const WineryDeployed = await upgrades.deployProxy(Winery, {
-    initializer: "initialize",
-  });
-  await WineryDeployed.deployed();
+    initializer: 'initialize',
+  })
+  await WineryDeployed.deployed()
 
-  return WineryDeployed.address;
+  return WineryDeployed.address
 }
 
 main()
   .then((r: string) => {
-    console.log("deployed address:", r);
-    return r;
+    console.log('deployed address:', r)
+    return r
   })
   .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+    console.error(error)
+    process.exit(1)
+  })
 
 // //available functions
 // async function main() {

@@ -1,9 +1,13 @@
+// Pizzeria
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./Grape.sol";
+interface IGrape {
+    function balanceOf(address owner) external view returns (uint256);
+    function burn(address owner, uint256 index) external returns (uint256);
+}
 
 interface IWineryV3 {
     function skillPoints(address owner) external view returns (uint256);
@@ -11,7 +15,7 @@ interface IWineryV3 {
     function grapeDeposited(address owner) external view returns (uint256);
 }
 
-contract WineryProgressionV4 is Ownable {
+contract WineryProgression is Ownable {
 
     // Constants
     uint256 public constant BURN_ID = 0;
@@ -21,7 +25,7 @@ contract WineryProgressionV4 is Ownable {
     uint256 public constant UPGRADES_ID = 4;
     uint256 public constant VINTNERS_ID = 5;
     uint256 public constant STORAGE_ID = 6;
-    uint256 public constant MAFIA_ID = 7;
+    // uint256 public constant MAFIA_ID = 7;
 
     uint256[30] public grapeLevels = [0, 20 * 1e18, 48 * 1e18, 83 * 1e18, 125 * 1e18, 175 * 1e18, 235 * 1e18, 310 * 1e18, 400 * 1e18, 
         510 * 1e18, 641 * 1e18, 805 * 1e18, 1001 * 1e18, 1213 * 1e18, 1497 * 1e18, 1851 * 1e18, 2276 * 1e18, 2772 * 1e18, 3322 * 1e18, 3932 * 1e18,
@@ -37,7 +41,7 @@ contract WineryProgressionV4 is Ownable {
     uint256[6] public upgradesSkillValue = [1,4,6,8,11,100];
     uint256[6] public vintnersSkillValue = [10,15,20,30,50,20000];
     uint256[6] public vintageWineStorageSkillValue = [6000 * 1e18, 15000 * 1e18, 50000 * 1e18, 100000 * 1e18, 300000 * 1e18, 500000 * 1e18];
-    uint256[4] public mafiaModSkillValue = [0,3,6,10];
+    // uint256[4] public mafiaModSkillValue = [0,3,6,10];
 
     uint256[8] public MAX_SKILL_LEVEL = [
         burnSkillValue.length - 1,
@@ -46,11 +50,11 @@ contract WineryProgressionV4 is Ownable {
         masterVintnerSkillValue.length - 1,
         upgradesSkillValue.length - 1,
         vintnersSkillValue.length - 1,
-        vintageWineStorageSkillValue.length - 1,
-        mafiaModSkillValue.length - 1
+        vintageWineStorageSkillValue.length - 1
+        // mafiaModSkillValue.length - 1
     ];
 
-    Grape public grape;
+    IGrape public grape;
 
     uint256 public levelTime;
 
@@ -58,8 +62,8 @@ contract WineryProgressionV4 is Ownable {
     mapping(address => uint256) public skillPoints; // address => skill points available
     mapping(address => uint256[8]) public skillsLearned; // address => skill learned.
 
-    constructor(Grape _grape) {
-        grape = _grape;
+    constructor(address _grape) {
+        grape = IGrape(_grape);
     }
 
     // EVENTS
@@ -90,12 +94,12 @@ contract WineryProgressionV4 is Ownable {
     function setvintageWineStorageSkillValue(uint256 _index, uint256 _value) external onlyOwner {
         vintageWineStorageSkillValue[_index] = _value;
     }
-    function setmafiaModSkillValue(uint256 _index, uint256 _value) external onlyOwner {
-        mafiaModSkillValue[_index] = _value;
-    }
+    // function setmafiaModSkillValue(uint256 _index, uint256 _value) external onlyOwner {
+    //     mafiaModSkillValue[_index] = _value;
+    // }
     
-    function setGrape(Grape _grape) external onlyOwner {
-        grape = _grape;
+    function setGrape(address _grape) external onlyOwner {
+        grape = IGrape(_grape);
     }
 
     function setBaseCostRespect(uint256 _baseCostRespect) external onlyOwner {
@@ -186,10 +190,10 @@ contract WineryProgressionV4 is Ownable {
     /**
     * Returns the modifier for mafia mechanic
     */
-    function getMafiaModifier(address _owner) public view returns (uint256) {
-        uint256 mafiaModSkill = skillsLearned[_owner][MAFIA_ID];
-        return mafiaModSkillValue[mafiaModSkill];
-    }
+    // function getMafiaModifier(address _owner) public view returns (uint256) {
+    //     uint256 mafiaModSkill = skillsLearned[_owner][MAFIA_ID];
+    //     return mafiaModSkillValue[mafiaModSkill];
+    // }
 
     /**
     * Returns the max storage for vintageWine in the winery
@@ -249,8 +253,8 @@ contract WineryProgressionV4 is Ownable {
         uint256 mastervintner,
         uint256 upgrades,
         uint256 vintners,     
-        uint256 vintageWineStorage,     
-        uint256 mafiaMod     
+        uint256 vintageWineStorage
+        // uint256 mafiaMod     
     ) {
         uint256[8] memory skills = skillsLearned[_owner];
 
@@ -261,7 +265,7 @@ contract WineryProgressionV4 is Ownable {
         upgrades = skills[UPGRADES_ID];
         vintners = skills[VINTNERS_ID]; 
         vintageWineStorage = skills[STORAGE_ID]; 
-        mafiaMod = skills[MAFIA_ID]; 
+        // mafiaMod = skills[MAFIA_ID]; 
     }
 
     // External
@@ -331,7 +335,7 @@ contract WineryProgressionV4 is Ownable {
         skillsLearned[sender][UPGRADES_ID] = 0;
         skillsLearned[sender][VINTNERS_ID] = 0;
         skillsLearned[sender][STORAGE_ID] = 0;
-        skillsLearned[sender][MAFIA_ID] = 0;
+        // skillsLearned[sender][MAFIA_ID] = 0;
 
         skillPoints[sender] = level - 1;
 
@@ -360,7 +364,8 @@ contract WineryProgressionV4 is Ownable {
     function fixSkillPoints(address _player) public {
         uint256 level = _getLevel(_player);
         uint256 currentSkillPoints = skillPoints[_player];
-        uint256 totalSkillsLearned = skillsLearned[_player][BURN_ID] + skillsLearned[_player][FATIGUE_ID] + skillsLearned[_player][CELLAR_ID] + skillsLearned[_player][MASTERVINTNER_ID] + skillsLearned[_player][UPGRADES_ID] + skillsLearned[_player][VINTNERS_ID] + skillsLearned[_player][STORAGE_ID] + skillsLearned[_player][MAFIA_ID];
+        // uint256 totalSkillsLearned = skillsLearned[_player][BURN_ID] + skillsLearned[_player][FATIGUE_ID] + skillsLearned[_player][CELLAR_ID] + skillsLearned[_player][MASTERVINTNER_ID] + skillsLearned[_player][UPGRADES_ID] + skillsLearned[_player][VINTNERS_ID] + skillsLearned[_player][STORAGE_ID] + skillsLearned[_player][MAFIA_ID];
+        uint256 totalSkillsLearned = skillsLearned[_player][BURN_ID] + skillsLearned[_player][FATIGUE_ID] + skillsLearned[_player][CELLAR_ID] + skillsLearned[_player][MASTERVINTNER_ID] + skillsLearned[_player][UPGRADES_ID] + skillsLearned[_player][VINTNERS_ID] + skillsLearned[_player][STORAGE_ID];
 
         uint256 correctSkillPoints = level - 1;
         if(level == grapeLevels.length){ // last level has 2 skill points

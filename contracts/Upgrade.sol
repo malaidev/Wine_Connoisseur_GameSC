@@ -7,7 +7,20 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "./VintageWine.sol";
-import "./Grape.sol";
+
+interface IGrape {
+    function totalSupply() external view returns (uint256);
+    function decimals() external view returns (uint8);
+    function getOwner() external view returns (address);
+    function balanceOf(address owner) external view returns (uint256);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function allowance(address _owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function burnFrom(address account, uint256 amount) external ;
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
 
 contract Upgrade is ERC721Enumerable, Ownable, Pausable {
     using SafeERC20 for IERC20;
@@ -32,7 +45,7 @@ contract Upgrade is ERC721Enumerable, Ownable, Pausable {
     // Var
 
     VintageWine vintageWine;
-    Grape grape;
+    IGrape grape;
     address public wineryAddress;
 
     string public BASE_URI;
@@ -54,9 +67,9 @@ contract Upgrade is ERC721Enumerable, Ownable, Pausable {
 
     // Constructor
 
-    constructor(VintageWine _vintageWine, Grape _grape, string memory _BASE_URI) ERC721("VintageWine Game Vintner Tools", "VINTAGEWINE-GAME-VINTNER-TOOL") {
+    constructor(VintageWine _vintageWine, address _grape, string memory _BASE_URI) ERC721("VintageWine Game Vintner Tools", "VINTAGEWINE-GAME-VINTNER-TOOL") {
         vintageWine = _vintageWine;
-        grape = _grape;
+        grape = IGrape(_grape);
         BASE_URI = _BASE_URI;
         
         // first three upgrades
@@ -113,8 +126,8 @@ contract Upgrade is ERC721Enumerable, Ownable, Pausable {
         vintageWine = _vintageWine;
     }
 
-    function setGrape(Grape _grape) external onlyOwner {
-        grape = _grape;
+    function setGrape(address _grape) external onlyOwner {
+        grape = IGrape(_grape);
     }
 
     function setWineryAddress(address _wineryAddress) external onlyOwner {
@@ -161,10 +174,12 @@ contract Upgrade is ERC721Enumerable, Ownable, Pausable {
         _createUpgrades(_qty, _level, _msgSender());
 
         vintageWine.burn(_msgSender(), transactionCostVintageWine * (100 - LP_TAX_PERCENT) / 100);
-        grape.burn(_msgSender(), transactionCostGrape * (100 - LP_TAX_PERCENT) / 100);
+        // grape.burn(_msgSender(), transactionCostGrape * (100 - LP_TAX_PERCENT) / 100);
+        grape.burnFrom(_msgSender(), transactionCostGrape * (100 - LP_TAX_PERCENT) / 100);
 
         vintageWine.transferForUpgradesFees(_msgSender(), transactionCostVintageWine * LP_TAX_PERCENT / 100);
-        grape.transferForUpgradesFees(_msgSender(), transactionCostGrape * LP_TAX_PERCENT / 100);
+        grape.transferFrom(_msgSender(), address(this), transactionCostVintageWine * LP_TAX_PERCENT / 100);
+        // grape.transferForUpgradesFees(_msgSender(), transactionCostGrape * LP_TAX_PERCENT / 100);
     }
 
     // Returns information for multiples upgrades

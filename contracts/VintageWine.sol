@@ -1,3 +1,4 @@
+// Pizza
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
@@ -42,46 +43,75 @@ contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
      * vintner address can only be set once
      */
     function setVintnerAddress(address _vintnerAddress) external onlyOwner {
-        require(address(vintnerAddress) == address(0), "vintner address already set");
+        require(
+            address(vintnerAddress) == address(0),
+            "vintner address already set"
+        );
         vintnerAddress = _vintnerAddress;
     }
 
     function mintPromotionalVintageWine(address _to) external onlyOwner {
-        require(!promotionalVintageWineMinted, "promotional vintageWine has already been minted");
+        require(
+            !promotionalVintageWineMinted,
+            "promotional vintageWine has already been minted"
+        );
         promotionalVintageWineMinted = true;
         _mint(_to, NUM_PROMOTIONAL_VINTAGEWINE * ONE_VINTAGEWINE);
     }
 
     function mintAvaxLPVintageWine() external onlyOwner {
-        require(!avaxLPVintageWineMinted, "avax vintageWine LP has already been minted");
+        require(
+            !avaxLPVintageWineMinted,
+            "avax vintageWine LP has already been minted"
+        );
         avaxLPVintageWineMinted = true;
         _mint(owner(), NUM_VINTAGEWINE_AVAX_LP * ONE_VINTAGEWINE);
     }
 
     function mintGrapeLPVintageWine() external onlyOwner {
-        require(!grapeLPVintageWineMinted, "grape vintageWine LP has already been minted");
+        require(
+            !grapeLPVintageWineMinted,
+            "grape vintageWine LP has already been minted"
+        );
         grapeLPVintageWineMinted = true;
         _mint(owner(), NUM_VINTAGEWINE_GRAPE_LP * ONE_VINTAGEWINE);
     }
 
-    function setNumVintageWineAvaxLp(uint256 _numVintageWineAvaxLp) external onlyOwner {
+    function setNumVintageWineAvaxLp(uint256 _numVintageWineAvaxLp)
+        external
+        onlyOwner
+    {
         NUM_VINTAGEWINE_AVAX_LP = _numVintageWineAvaxLp;
     }
 
     // external
 
     function mint(address _to, uint256 _amount) external {
-        require(wineryAddress != address(0) && vintnerAddress != address(0) && cellarAddress != address(0) && upgradeAddress != address(0), "missing initial requirements");
-        require(_msgSender() == wineryAddress,"msgsender does not have permission");
+        require(
+            wineryAddress != address(0) &&
+                vintnerAddress != address(0) &&
+                cellarAddress != address(0) &&
+                upgradeAddress != address(0),
+            "missing initial requirements"
+        );
+        require(
+            _msgSender() == wineryAddress,
+            "msgsender does not have permission"
+        );
         _mint(_to, _amount);
     }
 
     function burn(address _from, uint256 _amount) external {
-        require(vintnerAddress != address(0) && cellarAddress != address(0) && upgradeAddress != address(0), "missing initial requirements");
         require(
-            _msgSender() == vintnerAddress 
-            || _msgSender() == cellarAddress 
-            || _msgSender() == upgradeAddress,
+            vintnerAddress != address(0) &&
+                cellarAddress != address(0) &&
+                upgradeAddress != address(0),
+            "missing initial requirements"
+        );
+        require(
+            _msgSender() == vintnerAddress ||
+                _msgSender() == cellarAddress ||
+                _msgSender() == upgradeAddress,
             "msgsender does not have permission"
         );
         _burn(_from, _amount);
@@ -89,13 +119,19 @@ contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
 
     function transferToCellar(address _from, uint256 _amount) external {
         require(cellarAddress != address(0), "missing initial requirements");
-        require(_msgSender() == cellarAddress, "only the cellar contract can call transferToCellar");
+        require(
+            _msgSender() == cellarAddress,
+            "only the cellar contract can call transferToCellar"
+        );
         _transfer(_from, cellarAddress, _amount);
     }
 
     function transferForUpgradesFees(address _from, uint256 _amount) external {
         require(upgradeAddress != address(0), "missing initial requirements");
-        require(_msgSender() == upgradeAddress, "only the upgrade contract can call transferForUpgradesFees");
+        require(
+            _msgSender() == upgradeAddress,
+            "only the upgrade contract can call transferForUpgradesFees"
+        );
         _transfer(_from, upgradeAddress, _amount);
     }
 }
