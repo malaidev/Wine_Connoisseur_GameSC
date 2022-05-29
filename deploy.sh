@@ -1,7 +1,23 @@
-# fuji grape address 0x623D9AbaAfc855090A5F28C839A1aa82ebA94987
+# Deploy step
 
 # npx hardhat run --network avaxfuji scripts/deployVintageWine.ts
 # npx hardhat verify --network avaxfuji
+
+# npx hardhat run --network avaxfuji scripts/deployCellar.ts
+# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress)
+
+# npx hardhat run --network avaxfuji scripts/deployUpgrade.ts
+# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, grapeTokenAddress, BASE_URI)
+
+# npx hardhat run --network avaxfuji scripts/deployVintner.ts
+# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, oracleAddress, BASE_URI)
+
+# npx hardhat run --network avaxfuji scripts/deployWineryProgression.ts
+# npx hardhat verify --network avaxfuji (--constructor_args: grapeTokenAddress)
+
+# npx hardhat run --network avaxfuji scripts/deployWinery.ts
+# npx hardhat verify --network avaxfuji (--constructor_args: vintnerAddress,  upgradeAddress,  vintageWineAddress,  grapeTokenAddress,  cellarAddress,  wineryProgression)
+  
 
 echo "DEPLOY"
 echo ""

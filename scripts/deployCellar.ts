@@ -1,4 +1,5 @@
 import { ethers } from 'hardhat'
+import { vintageWineAddress } from './address'
 
 async function main(): Promise<string> {
   const [deployer] = await ethers.getSigners()
@@ -7,7 +8,7 @@ async function main(): Promise<string> {
   console.log('Account balance:', (await deployer.getBalance()).toString())
 
   const Cellar = await ethers.getContractFactory('Cellar')
-  const Cellar_Deployed = await Cellar.deploy()
+  const Cellar_Deployed = await Cellar.deploy(vintageWineAddress)
 
   return Cellar_Deployed.address
 }

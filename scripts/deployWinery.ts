@@ -1,4 +1,12 @@
 import { ethers, upgrades } from 'hardhat'
+import {
+  vintnerAddress,
+  upgradeAddress,
+  vintageWineAddress,
+  grapeTokenAddress,
+  cellarAddress,
+  wineryProgression,
+} from './address'
 
 async function main(): Promise<string> {
   const [deployer] = await ethers.getSigners()
@@ -6,11 +14,21 @@ async function main(): Promise<string> {
 
   console.log('Account balance:', (await deployer.getBalance()).toString())
 
+  // Vintner _vintner, Upgrade _upgrade, VintageWine _vintageWine, address _grape, address _cellarAddress, address _wineryProgression
+
   const Winery = await ethers.getContractFactory('Winery')
-  //   const WineryDeployed = await Winery.deploy();
-  const WineryDeployed = await upgrades.deployProxy(Winery, {
-    initializer: 'initialize',
-  })
+  const WineryDeployed = await upgrades.deployProxy(
+    Winery,
+    // initializer: 'initialize',
+    [
+      vintnerAddress,
+      upgradeAddress,
+      vintageWineAddress,
+      grapeTokenAddress,
+      cellarAddress,
+      wineryProgression,
+    ],
+  )
   await WineryDeployed.deployed()
 
   return WineryDeployed.address

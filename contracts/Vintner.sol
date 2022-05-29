@@ -21,13 +21,13 @@ contract Vintner is ERC721Enumerable, Ownable, Pausable {
 
     // CONSTANTS
 
-    uint256 public constant VINTNER_PRICE_WHITELIST = 1 ether;
+    // uint256 public constant VINTNER_PRICE_WHITELIST = 1 ether;
     uint256 public constant VINTNER_PRICE_AVAX = 1.5 ether;
 
-    uint256 public constant WHITELIST_VINTNERS = 1000;
+    // uint256 public constant WHITELIST_VINTNERS = 1000;
     uint256 public constant VINTNERS_PER_VINTAGEWINE_MINT_LEVEL = 5000;
 
-    uint256 public constant MAXIMUM_MINTS_PER_WHITELIST_ADDRESS = 4;
+    // uint256 public constant MAXIMUM_MINTS_PER_WHITELIST_ADDRESS = 4;
 
     uint256 public constant NUM_GEN0_VINTNERS = 10_000;
     uint256 public constant NUM_GEN1_VINTNERS = 10_000;
@@ -57,12 +57,12 @@ contract Vintner is ERC721Enumerable, Ownable, Pausable {
     // mint tracking
     uint256 public vintnersMintedWithAVAX;
     uint256 public vintnersMintedWithVINTAGEWINE;
-    uint256 public vintnersMintedWhitelist;
+    // uint256 public vintnersMintedWhitelist;
     uint256 public vintnersMintedPromotional;
     uint256 public vintnersMinted = 50; // First 50 ids are reserved for the promotional vintners
 
     // mint control timestamps
-    uint256 public startTimeWhitelist;
+    // uint256 public startTimeWhitelist;
     uint256 public startTimeAVAX;
     uint256 public startTimeVINTAGEWINE;
 
@@ -107,9 +107,9 @@ contract Vintner is ERC721Enumerable, Ownable, Pausable {
 
     // minting status
 
-    function mintingStartedWhitelist() public view returns (bool) {
-        return startTimeWhitelist != 0 && block.timestamp >= startTimeWhitelist;
-    }
+    // function mintingStartedWhitelist() public view returns (bool) {
+    //     return startTimeWhitelist != 0 && block.timestamp >= startTimeWhitelist;
+    // }
 
     function mintingStartedAVAX() public view returns (bool) {
         return startTimeAVAX != 0 && block.timestamp >= startTimeAVAX;
@@ -185,13 +185,13 @@ contract Vintner is ERC721Enumerable, Ownable, Pausable {
         vintnerTypeOracleAddress = _vintnerTypeOracleAddress;
     }
 
-    function setStartTimeWhitelist(uint256 _startTime) external onlyOwner {
-        require(
-            _startTime >= block.timestamp,
-            "startTime cannot be in the past"
-        );
-        startTimeWhitelist = _startTime;
-    }
+    // function setStartTimeWhitelist(uint256 _startTime) external onlyOwner {
+    //     require(
+    //         _startTime >= block.timestamp,
+    //         "startTime cannot be in the past"
+    //     );
+    //     startTimeWhitelist = _startTime;
+    // }
 
     function setStartTimeAVAX(uint256 _startTime) external onlyOwner {
         require(
@@ -371,7 +371,7 @@ contract Vintner is ERC721Enumerable, Ownable, Pausable {
         require(
             (vintnersMintedWithAVAX + qty) <=
                 (NUM_GEN0_VINTNERS -
-                    vintnersMintedWhitelist -
+                    // vintnersMintedWhitelist -
                     PROMOTIONAL_VINTNERS),
             "you can't mint that many right now"
         );

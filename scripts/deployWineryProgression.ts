@@ -1,4 +1,5 @@
 import { ethers } from 'hardhat'
+import { grapeTokenAddress } from './address'
 
 async function main(): Promise<string> {
   const [deployer] = await ethers.getSigners()
@@ -7,7 +8,7 @@ async function main(): Promise<string> {
   console.log('Account balance:', (await deployer.getBalance()).toString())
 
   const WineryProgression = await ethers.getContractFactory('WineryProgression')
-  const WineryProgression_Deployed = await WineryProgression.deploy()
+  const WineryProgression_Deployed = await WineryProgression.deploy(grapeTokenAddress)
 
   return WineryProgression_Deployed.address
 }

@@ -9,13 +9,13 @@ interface IGrape {
     function burn(address owner, uint256 index) external returns (uint256);
 }
 
-interface IWineryV3 {
+interface IWinery {
     function skillPoints(address owner) external view returns (uint256);
     function skillsLearned(address owner, uint256 index) external view returns (uint256);
     function grapeDeposited(address owner) external view returns (uint256);
 }
 
-contract WineryProgression is Ownable {
+contract WineryProgressionV3 is Ownable {
 
     // Constants
     uint256 public constant BURN_ID = 0;
@@ -377,7 +377,7 @@ contract WineryProgression is Ownable {
     }
 
         // WINERY MIGRATION
-    IWineryV3 public oldWinery;
+    IWinery public oldWinery;
     mapping(address => bool) public updateOnce; // owner => has updated
 
     function checkIfNeedUpdate(address _owner) public view returns (bool) {
@@ -396,7 +396,7 @@ contract WineryProgression is Ownable {
     }
 
     function setOldWinery(address _oldWinery) external onlyOwner {
-        oldWinery = IWineryV3(_oldWinery);
+        oldWinery = IWinery(_oldWinery);
     }
 
     function updateDataFromOldWinery(address _owner) external {
