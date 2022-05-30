@@ -6,6 +6,7 @@ import {
   grapeTokenAddress,
   cellarAddress,
   wineryProgression,
+  wineryAddress,
 } from './address'
 
 async function main(): Promise<string> {
@@ -15,18 +16,7 @@ async function main(): Promise<string> {
   console.log('Account balance:', (await deployer.getBalance()).toString())
 
   const Winery = await ethers.getContractFactory('Winery')
-  const WineryDeployed = await upgrades.deployProxy(
-    Winery,
-    // initializer: 'initialize',
-    [
-      vintnerAddress,
-      upgradeAddress,
-      vintageWineAddress,
-      grapeTokenAddress,
-      cellarAddress,
-      wineryProgression,
-    ],
-  )
+  const WineryDeployed = await upgrades.upgradeProxy(wineryAddress, Winery)
   await WineryDeployed.deployed()
 
   return WineryDeployed.address

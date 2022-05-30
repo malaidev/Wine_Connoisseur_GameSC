@@ -17,7 +17,10 @@
 
 # npx hardhat run --network avaxfuji scripts/deployWinery.ts
 # npx hardhat verify --network avaxfuji (--constructor_args: vintnerAddress,  upgradeAddress,  vintageWineAddress,  grapeTokenAddress,  cellarAddress,  wineryProgression)
-  
+
+# Update winery contract
+# npx hardhat run --network avaxfuji scripts/updateWinery.ts
+
 
 echo "DEPLOY"
 echo ""

@@ -1,4 +1,4 @@
-// Pizzeria
+// Winery
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
@@ -15,7 +15,7 @@ interface IWinery {
     function grapeDeposited(address owner) external view returns (uint256);
 }
 
-contract WineryProgressionV3 is Ownable {
+contract WineryProgression is Ownable {
 
     // Constants
     uint256 public constant BURN_ID = 0;

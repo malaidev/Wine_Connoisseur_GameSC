@@ -1,4 +1,4 @@
-//Pizzeria
+//Winery
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
@@ -27,7 +27,7 @@ interface IWineryProgression {
 //     function mafiaCurrentPenalty() external view returns (uint256);
 // }
 
-contract WineryV3 is Initializable, UUPSUpgradeable, OwnableUpgradeable {
+contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     // Constants
     address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
     uint256 public constant CLAIM_VINTAGEWINE_CONTRIBUTION_PERCENTAGE = 10;
