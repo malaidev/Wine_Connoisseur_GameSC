@@ -6,6 +6,7 @@ import '@nomiclabs/hardhat-waffle'
 import '@openzeppelin/hardhat-upgrades'
 import '@typechain/hardhat'
 import 'hardhat-gas-reporter'
+import 'hardhat-deploy'
 import 'solidity-coverage'
 
 dotenv.config()
@@ -86,48 +87,102 @@ const config: HardhatUserConfig = {
     tests: './test',
   },
   solidity: {
-    version: '0.8.11',
+    // version: '0.8.11',
     // version: '0.6.12',
-    // compilers: [
-    //   {
-    //     version: '0.8.11',
-    //   },
-    //   {
-    //     version: '0.6.12',
-    //   },
-    // ],
-    // overrides: {
-    //   'contracts/Grape.sol': {
-    //     version: '0.6.12',
-    //   },
-    //   'contracts/_Grape.sol': {
-    //     version: '0.8.11',
-    //   },
-    //   'contracts/Cellar.sol': {
-    //     version: '0.8.11',
-    //   },
-    //   'contracts/GrapeFountain.sol': {
-    //     version: '0.8.11',
-    //   },
-    //   'contracts/Upgrade.sol': {
-    //     version: '0.8.11',
-    //   },
-    //   'contracts/VintageWine.sol': {
-    //     version: '0.8.11',
-    //   },
-    //   'contracts/Vinter.sol': {
-    //     version: '0.8.11',
-    //   },
-    //   'contracts/Winery.sol': {
-    //     version: '0.8.11',
-    //   },
-    //   'contracts/WineryProgression.sol': {
-    //     version: '0.8.11',
-    //   },
-    // },
+    compilers: [
+      {
+        version: '0.8.11',
+      },
+      {
+        version: '0.6.12',
+      },
+    ],
+    overrides: {
+      'contracts/Grape.sol': {
+        version: '0.6.12',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/_Grape.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/Cellar.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/GrapeFountain.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/Upgrade.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/VintageWine.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/Vintner.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/Winery.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/WineryProgression.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+    },
     settings: {
       optimizer: {
-        enabled: true,
+        enabled: true
       },
     },
   },

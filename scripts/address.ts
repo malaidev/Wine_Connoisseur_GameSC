@@ -9,4 +9,4 @@ export const wineryAddress = '0x5882a4b7c245d58ac34e53e242ff955a12e3708f'
 
 // Vinter Oracle Address - you can change it to your admin wallet address
 export const oracleAddress = '0xb5D774a16CF9903353DaeAE188a1954312080D4a'
-export const BASE_URI = ''
+export const BASE_URI = 'https://api.pizza.game/chefs'
