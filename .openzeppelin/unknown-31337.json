@@ -1,0 +1,620 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      "txHash": "0x115e5efd5c9319ec17cf8405dce69cc6dbe30f35ee9dda100d9cc9720d3fce80",
+      "kind": "uups"
+    },
+    {
+      "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
+      "txHash": "0x3492d811f4e38748c6c8077ca081d9ed15d5f0ff537530fc6cfccc7df9dc79bb",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "915e2a3c5b33048d0e3e10edf03e3beb569271f070c53b6c9c20faa430848242": {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "txHash": "0x1af44747064f3e1d3d0a47d7ebf4984347ccaa11a536037e5c77239d39f1328a",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:87"
+          },
+          {
+            "label": "stakedVintners",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_mapping(t_uint256,t_address)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:39"
+          },
+          {
+            "label": "fatiguePerMinute",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:41"
+          },
+          {
+            "label": "wineryFatigue",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:42"
+          },
+          {
+            "label": "wineryVintageWine",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:43"
+          },
+          {
+            "label": "totalPPM",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:44"
+          },
+          {
+            "label": "startTimeStamp",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:45"
+          },
+          {
+            "label": "numberOfStaked",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_mapping(t_address,t_array(t_uint256)2_storage)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:47"
+          },
+          {
+            "label": "stakedUpgrades",
+            "offset": 0,
+            "slot": "208",
+            "type": "t_mapping(t_uint256,t_address)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:49"
+          },
+          {
+            "label": "ownedVintnerStakes",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:52"
+          },
+          {
+            "label": "ownedVintnerStakesIndex",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:53"
+          },
+          {
+            "label": "ownedVintnerStakesBalance",
+            "offset": 0,
+            "slot": "211",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:54"
+          },
+          {
+            "label": "ownedUpgradeStakes",
+            "offset": 0,
+            "slot": "212",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:56"
+          },
+          {
+            "label": "ownedUpgradeStakesIndex",
+            "offset": 0,
+            "slot": "213",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:57"
+          },
+          {
+            "label": "ownedUpgradeStakesBalance",
+            "offset": 0,
+            "slot": "214",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:58"
+          },
+          {
+            "label": "restingVintners",
+            "offset": 0,
+            "slot": "215",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:61"
+          },
+          {
+            "label": "yieldPPS",
+            "offset": 0,
+            "slot": "216",
+            "type": "t_uint256",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:65"
+          },
+          {
+            "label": "startTime",
+            "offset": 0,
+            "slot": "217",
+            "type": "t_uint256",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:67"
+          },
+          {
+            "label": "grapeResetCost",
+            "offset": 0,
+            "slot": "218",
+            "type": "t_uint256",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:69"
+          },
+          {
+            "label": "unstakePenalty",
+            "offset": 0,
+            "slot": "219",
+            "type": "t_uint256",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:71"
+          },
+          {
+            "label": "fatigueTuner",
+            "offset": 0,
+            "slot": "220",
+            "type": "t_uint256",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:73"
+          },
+          {
+            "label": "vintner",
+            "offset": 0,
+            "slot": "221",
+            "type": "t_contract(Vintner)7024",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:75"
+          },
+          {
+            "label": "upgrade",
+            "offset": 0,
+            "slot": "222",
+            "type": "t_contract(Upgrade)5788",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:76"
+          },
+          {
+            "label": "vintageWine",
+            "offset": 0,
+            "slot": "223",
+            "type": "t_contract(VintageWine)6147",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:77"
+          },
+          {
+            "label": "grape",
+            "offset": 0,
+            "slot": "224",
+            "type": "t_contract(IGrape)5043",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:78"
+          },
+          {
+            "label": "cellarAddress",
+            "offset": 0,
+            "slot": "225",
+            "type": "t_address",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:79"
+          },
+          {
+            "label": "wineryProgression",
+            "offset": 0,
+            "slot": "226",
+            "type": "t_contract(IWineryProgression)7084",
+            "contract": "Winery",
+            "src": "contracts\\Winery.sol:80"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)2_storage": {
+            "label": "uint256[2]",
+            "numberOfBytes": "64"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IGrape)5043": {
+            "label": "contract IGrape",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IWineryProgression)7084": {
+            "label": "contract IWineryProgression",
+            "numberOfBytes": "20"
+          },
+          "t_contract(Upgrade)5788": {
+            "label": "contract Upgrade",
+            "numberOfBytes": "20"
+          },
+          "t_contract(VintageWine)6147": {
+            "label": "contract VintageWine",
+            "numberOfBytes": "20"
+          },
+          "t_contract(Vintner)7024": {
+            "label": "contract Vintner",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_array(t_uint256)2_storage)": {
+            "label": "mapping(address => uint256[2])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "bea57890be183600b883a115f4189e3a622cf9ae96769ad5f253c58cc0eebb9d": {
+      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      "txHash": "0xdf9714314ec79c55bff1c16785884bd2d536ad5c5f1bc981b8d0b55a24293856",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_uint8",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol:67"
+          },
+          {
+            "contract": "ERC1967UpgradeUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol:211"
+          },
+          {
+            "contract": "UUPSUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol:107"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol:36"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:87"
+          },
+          {
+            "contract": "Winery",
+            "label": "stakedVintners",
+            "type": "t_mapping(t_uint256,t_address)",
+            "src": "contracts\\Winery.sol:39"
+          },
+          {
+            "contract": "Winery",
+            "label": "fatiguePerMinute",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\Winery.sol:41"
+          },
+          {
+            "contract": "Winery",
+            "label": "wineryFatigue",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\Winery.sol:42"
+          },
+          {
+            "contract": "Winery",
+            "label": "wineryVintageWine",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\Winery.sol:43"
+          },
+          {
+            "contract": "Winery",
+            "label": "totalPPM",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\Winery.sol:44"
+          },
+          {
+            "contract": "Winery",
+            "label": "startTimeStamp",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\Winery.sol:45"
+          },
+          {
+            "contract": "Winery",
+            "label": "numberOfStaked",
+            "type": "t_mapping(t_address,t_array(t_uint256)2_storage)",
+            "src": "contracts\\Winery.sol:47"
+          },
+          {
+            "contract": "Winery",
+            "label": "stakedUpgrades",
+            "type": "t_mapping(t_uint256,t_address)",
+            "src": "contracts\\Winery.sol:49"
+          },
+          {
+            "contract": "Winery",
+            "label": "ownedVintnerStakes",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts\\Winery.sol:52"
+          },
+          {
+            "contract": "Winery",
+            "label": "ownedVintnerStakesIndex",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "src": "contracts\\Winery.sol:53"
+          },
+          {
+            "contract": "Winery",
+            "label": "ownedVintnerStakesBalance",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\Winery.sol:54"
+          },
+          {
+            "contract": "Winery",
+            "label": "ownedUpgradeStakes",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts\\Winery.sol:56"
+          },
+          {
+            "contract": "Winery",
+            "label": "ownedUpgradeStakesIndex",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "src": "contracts\\Winery.sol:57"
+          },
+          {
+            "contract": "Winery",
+            "label": "ownedUpgradeStakesBalance",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts\\Winery.sol:58"
+          },
+          {
+            "contract": "Winery",
+            "label": "restingVintners",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "src": "contracts\\Winery.sol:61"
+          },
+          {
+            "contract": "Winery",
+            "label": "yieldPPS",
+            "type": "t_uint256",
+            "src": "contracts\\Winery.sol:65"
+          },
+          {
+            "contract": "Winery",
+            "label": "startTime",
+            "type": "t_uint256",
+            "src": "contracts\\Winery.sol:67"
+          },
+          {
+            "contract": "Winery",
+            "label": "grapeResetCost",
+            "type": "t_uint256",
+            "src": "contracts\\Winery.sol:69"
+          },
+          {
+            "contract": "Winery",
+            "label": "unstakePenalty",
+            "type": "t_uint256",
+            "src": "contracts\\Winery.sol:71"
+          },
+          {
+            "contract": "Winery",
+            "label": "fatigueTuner",
+            "type": "t_uint256",
+            "src": "contracts\\Winery.sol:73"
+          },
+          {
+            "contract": "Winery",
+            "label": "vintner",
+            "type": "t_contract(Vintner)6269",
+            "src": "contracts\\Winery.sol:75"
+          },
+          {
+            "contract": "Winery",
+            "label": "upgrade",
+            "type": "t_contract(Upgrade)5033",
+            "src": "contracts\\Winery.sol:76"
+          },
+          {
+            "contract": "Winery",
+            "label": "vintageWine",
+            "type": "t_contract(VintageWine)5392",
+            "src": "contracts\\Winery.sol:77"
+          },
+          {
+            "contract": "Winery",
+            "label": "grape",
+            "type": "t_contract(IGrape)4288",
+            "src": "contracts\\Winery.sol:78"
+          },
+          {
+            "contract": "Winery",
+            "label": "cellarAddress",
+            "type": "t_address",
+            "src": "contracts\\Winery.sol:79"
+          },
+          {
+            "contract": "Winery",
+            "label": "wineryProgression",
+            "type": "t_contract(IWineryProgression)6329",
+            "src": "contracts\\Winery.sol:80"
+          }
+        ],
+        "types": {
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_mapping(t_address,t_array(t_uint256)2_storage)": {
+            "label": "mapping(address => uint256[2])"
+          },
+          "t_array(t_uint256)2_storage": {
+            "label": "uint256[2]"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(address => mapping(uint256 => uint256))"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)"
+          },
+          "t_contract(Vintner)6269": {
+            "label": "contract Vintner"
+          },
+          "t_contract(Upgrade)5033": {
+            "label": "contract Upgrade"
+          },
+          "t_contract(VintageWine)5392": {
+            "label": "contract VintageWine"
+          },
+          "t_contract(IGrape)4288": {
+            "label": "contract IGrape"
+          },
+          "t_contract(IWineryProgression)6329": {
+            "label": "contract IWineryProgression"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint8": {
+            "label": "uint8"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    }
+  }
+}
