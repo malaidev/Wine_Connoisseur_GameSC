@@ -1,7 +1,8 @@
 import { expect } from 'chai'
 import { deployments, ethers, upgrades } from 'hardhat'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { oracleAddress, BASE_URI } from '../scripts/address'
+import { BASE_URI } from '../scripts/address'
+import { BigNumber } from 'ethers'
 import {
   Cellar,
   Grape,
@@ -11,11 +12,13 @@ import {
   Winery,
   WineryProgression,
 } from '../typechain'
+import { execPath } from 'process'
 
 describe('Wine Connoisseur game', function () {
   // Account
-  let deployer: SignerWithAddress
+  let owner: SignerWithAddress
   let caller: SignerWithAddress
+  let oracle: SignerWithAddress
 
   // Contract
   let vintageWine: VintageWine
@@ -28,35 +31,38 @@ describe('Wine Connoisseur game', function () {
 
   before(async () => {
     const signers = await ethers.getSigners()
-    deployer = signers[0]
-    caller = signers[1]
+    owner = signers[0]
+    oracle = signers[1]
+    caller = signers[2]
+
     // erc20Owner = signers[2]
     // erc721Owner = signers[3]
 
     // Deploy vintage Wine Contract
     let receipt = await deployments.deploy('VintageWine', {
-      from: deployer.address,
+      from: owner.address,
       args: [],
       log: true,
     })
     vintageWine = await ethers.getContractAt('VintageWine', receipt.address)
     // Deploy Grape Contract
     receipt = await deployments.deploy('Grape', {
-      from: deployer.address,
+      from: owner.address,
       args: [],
       log: true,
     })
     grape = await ethers.getContractAt('Grape', receipt.address)
+
     // Deploy Cellar Contract
     receipt = await deployments.deploy('Cellar', {
-      from: deployer.address,
+      from: owner.address,
       args: [vintageWine.address],
       log: true,
     })
     cellar = await ethers.getContractAt('Cellar', receipt.address)
     // Deploy Upgrade Contract
     receipt = await deployments.deploy('Upgrade', {
-      from: deployer.address,
+      from: owner.address,
       args: [vintageWine.address, grape.address, BASE_URI],
       log: true,
     })
@@ -64,14 +70,14 @@ describe('Wine Connoisseur game', function () {
 
     // Deploy Vintner Contract
     receipt = await deployments.deploy('Vintner', {
-      from: deployer.address,
-      args: [vintageWine.address, oracleAddress, BASE_URI],
+      from: owner.address,
+      args: [vintageWine.address, oracle.address, BASE_URI],
       log: true,
     })
     vintner = await ethers.getContractAt('Vintner', receipt.address)
     // Deploy Winery Progression Contract
     receipt = await deployments.deploy('WineryProgression', {
-      from: deployer.address,
+      from: owner.address,
       args: [grape.address],
       log: true,
     })
@@ -93,19 +99,128 @@ describe('Wine Connoisseur game', function () {
     await WineryDeployed.deployed()
 
     winery = await ethers.getContractAt('Winery', WineryDeployed.address)
-    console.log('winery', winery.address)
   })
-  describe('deploy', async () => {
+  describe('Deploy contract', async () => {
     it('should be deployed', async () => {})
   })
-  // describe('Vintner', function () {
-  //   it('Deploy Vintner ERC721 token contract', async function () {
-  //     const setGreetingTx = await greeter.setGreeting('Hola, mundo!')
+  describe('Mint token', async () => {
+    it('Mint Vintage token', async function () {
+      // Mint Vintage for promote
+      await vintageWine.mintPromotionalVintageWine(owner.address)
+      // Provide Avax-VintageWine pool
+      await vintageWine.mintAvaxLPVintageWine()
+      // provide Grape-VintageWine pool
+      await vintageWine.mintGrapeLPVintageWine()
+    })
+    it('Should assign the total supply of Grape tokens to the owner', async function () {
+      const ownerGrapeBalance = await grape.balanceOf(owner.address)
+      expect(await grape.totalSupply()).to.equal(ownerGrapeBalance)
+      const ownerVintageWineBalance = await vintageWine.balanceOf(owner.address)
+      const promoteAmount = await vintageWine.NUM_PROMOTIONAL_VINTAGEWINE()
+      const AvaxLPAmount = await vintageWine.NUM_VINTAGEWINE_AVAX_LP()
+      const GrapeLPAmount = await vintageWine.NUM_VINTAGEWINE_GRAPE_LP()
+      expect(promoteAmount.add(AvaxLPAmount).add(GrapeLPAmount)).to.equal(
+        ownerVintageWineBalance.div(BigNumber.from(10).pow(18)),
+      )
+    })
+  })
+  describe('Initialize contracts', function () {
+    it('Initialize Vintage Wine contract', async function () {
+      await vintageWine.setCellarAddress(cellar.address)
+      await vintageWine.setWineryAddress(winery.address)
+      await vintageWine.setVintnerAddress(vintner.address)
+      await vintageWine.setUpgradeAddress(upgrade.address)
+      expect(await vintageWine.vintnerAddress()).to.equal(vintner.address)
+    })
+  })
+  describe('Vintner', function () {
+    it('Set Start time', async function () {
+      // Set start time before mint
+      await vintner.setStartTimeAVAX(Math.floor(Date.now() / 1000) + 15)
+      await vintner.setStartTimeVINTAGEWINE(Math.floor(Date.now() / 1000) + 15)
+      await winery.setStartTime(Math.floor(Date.now() / 1000) + 15)
+    })
+    it('Mint Vintner ERC721 tokens', async function () {
+      // Send vintageWine token to caller
+      await vintageWine.transfer(
+        caller.address,
+        BigNumber.from(200000).mul(BigNumber.from(10).pow(18)),
+      )
+      // Check the caller balance
+      const callerBalance = await vintageWine.balanceOf(caller.address)
+      expect(callerBalance).to.equal(
+        BigNumber.from(200000).mul(BigNumber.from(10).pow(18)),
+      )
+      expect(await vintner.vintageWine()).to.equal(vintageWine.address)
 
-  //     // wait until the transaction is mined
-  //     await setGreetingTx.wait()
+      // Mint vinter promotional - 1 ~ 50 would promote for owner ( only owner )
+      await vintner.mintPromotional(3, 1, owner.address) // Mint normal vintner  - token amount, vintner type, target address
+      await vintner.mintPromotional(2, 2, owner.address) // Mint master vintner
+      expect(await vintner.vintnersMintedPromotional()).to.equal(5)
 
-  //     expect(await greeter.greet()).to.equal('Hola, mundo!')
-  //   })
-  // })
+      // Mint vinter using Avax
+      await vintner.connect(caller).mintVintnerWithAVAX(2, {
+        value: ethers.utils.parseEther('3'),
+      }) // 1.5 avax
+      expect(await vintner.vintnersMintedWithAVAX()).to.equal(2)
+
+      // Mint vinter using vintageWine
+      await vintner.connect(caller).mintVintnerWithVINTAGEWINE(3) // each token for 20,000 vintageWine
+      expect(await vintner.vintnersMintedWithVINTAGEWINE()).to.equal(3)
+    })
+  })
+  describe('Winery', function () {
+    it('Initialize contract', async function () {
+      // We need to do this in real production
+      // await winery.initialize(
+      //   vintner.address,
+      //   upgrade.address,
+      //   vintageWine.address,
+      //   grape.address,
+      //   cellar.address,
+      //   wineryProgression.address,
+      // )
+
+      // Check contract address is right
+      expect(await winery.wineryProgression()).to.equal(
+        wineryProgression.address,
+      )
+      expect(await winery.grape()).to.equal(grape.address)
+      expect(await winery.vintner()).to.equal(vintner.address)
+    })
+    it('Stake Vinter ERC721 to Winery', async function () {
+      // 1 ~ 50 is promotion for owner
+      expect(await vintner.ownerOf(1)).to.equal(owner.address)
+      expect(await vintner.ownerOf(5)).to.equal(owner.address)
+      // 51 ~ for normal user
+      expect(await vintner.ownerOf(51)).to.equal(caller.address)
+      expect(await vintner.ownerOf(55)).to.equal(caller.address)
+
+      await expect(winery.connect(caller).stakeMany([1, 2, 3], [])).to.be
+        .reverted
+
+      await vintner.setApprovalForAll(winery.address, true)
+      await winery.stakeMany([1, 2, 3, 4, 5], [])
+
+      // Set Vintner type before stake
+      /**
+       * @dev as an anti cheat mechanism, an external automation will generate the NFT metadata and set the vintner types via rng
+       * - Using an external source of randomness ensures our mint cannot be cheated
+       * - The external automation is open source and can be found on vintageWine game's github
+       * - Once the mint is finished, it is provable that this randomness was not tampered with by providing the seed
+       * - Vintner type can be set only once
+       */
+      await vintner.connect(oracle).setVintnerType(51, 1) // token ID, vintner type
+      await vintner.connect(oracle).setVintnerType(52, 1)
+      await vintner.connect(oracle).setVintnerType(53, 1)
+      await vintner.connect(oracle).setVintnerType(54, 1)
+      await vintner.connect(oracle).setVintnerType(55, 2)
+      // Should approve Vinery token to Winery address
+      await vintner.connect(caller).approve(winery.address, 51)
+      await expect(winery.connect(caller).stakeMany([51, 52, 53, 54, 55], []))
+        .to.be.reverted
+      await vintner.connect(caller).setApprovalForAll(winery.address, true)
+      await winery.connect(caller).stakeMany([51, 52, 53, 54, 55], [])
+    })
+  })
 })

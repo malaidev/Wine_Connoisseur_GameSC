@@ -5,7 +5,7 @@ export const cellarAddress = '0x230850A1eb80f11a547eB7803D87806A8FCD4b15'
 export const upgradeAddress = '0x70Ace34e446dC2c9411C4332aEb004EDd35b2E1f'
 export const vintnerAddress = '0xD5908a371e56528554cB20A59130feeC8d32421b'
 export const wineryProgression = '0xd4425b887ee33b659e73B4C12889d740612dE00A'
-export const wineryAddress = '0x5882a4b7c245d58ac34e53e242ff955a12e3708f'
+export const wineryAddress = '0xfac303f8ff79b63eb142a0ab28e523335c14b059'
 
 // Vinter Oracle Address - you can change it to your admin wallet address
 export const oracleAddress = '0xb5D774a16CF9903353DaeAE188a1954312080D4a'
