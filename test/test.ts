@@ -105,6 +105,12 @@ describe('Wine Connoisseur game', function () {
   })
   describe('Mint token', async () => {
     it('Mint Vintage token', async function () {
+      // Mint Grape token
+      await grape.mint(
+        owner.address,
+        BigNumber.from(1000000).mul(BigNumber.from(10).pow(18)),
+      )
+      await grape.transferOperator(owner.address)
       // Mint Vintage for promote
       await vintageWine.mintPromotionalVintageWine(owner.address)
       // Provide Avax-VintageWine pool
@@ -132,14 +138,17 @@ describe('Wine Connoisseur game', function () {
       await vintageWine.setUpgradeAddress(upgrade.address)
       expect(await vintageWine.vintnerAddress()).to.equal(vintner.address)
     })
-  })
-  describe('Vintner', function () {
     it('Set Start time', async function () {
-      // Set start time before mint
-      await vintner.setStartTimeAVAX(Math.floor(Date.now() / 1000) + 15)
-      await vintner.setStartTimeVINTAGEWINE(Math.floor(Date.now() / 1000) + 15)
-      await winery.setStartTime(Math.floor(Date.now() / 1000) + 15)
+      await vintner.setStartTimeAVAX(Math.floor(Date.now() / 1000) + 20)
+      await vintner.setStartTimeVINTAGEWINE(Math.floor(Date.now() / 1000) + 20)
+      await winery.setStartTime(Math.floor(Date.now() / 1000) + 20)
+      await upgrade.setStartTime(Math.floor(Date.now() / 1000) + 20)
+      await wineryProgression.setLevelStartTime(
+        Math.floor(Date.now() / 1000) + 20,
+      )
     })
+  })
+  describe('Vintner 721 token', function () {
     it('Mint Vintner ERC721 tokens', async function () {
       // Send vintageWine token to caller
       await vintageWine.transfer(
@@ -169,6 +178,61 @@ describe('Wine Connoisseur game', function () {
       expect(await vintner.vintnersMintedWithVINTAGEWINE()).to.equal(3)
     })
   })
+  describe('Tools 721 token', function () {
+    it('Mint Tools ERC721 tokens', async function () {
+      await grape.transfer(
+        caller.address,
+        BigNumber.from(200000).mul(BigNumber.from(10).pow(18)),
+      )
+      await vintageWine.transfer(
+        caller.address,
+        BigNumber.from(200000).mul(BigNumber.from(10).pow(18)),
+      )
+      // Need to approve Grape token and Vintage Wine token to buy Tools token according Level
+      const mintAmount = 2
+      await grape.approve(
+        upgrade.address,
+        BigNumber.from((50 + 80 + 110) * mintAmount).mul(
+          BigNumber.from(10).pow(18),
+        ),
+      ) // level 0 - 2, level 1 - 2, level 2 - 2
+      await vintageWine.approve(
+        upgrade.address,
+        BigNumber.from((3000 + 10000 + 20000) * mintAmount).mul(
+          BigNumber.from(10).pow(18),
+        ),
+      )
+      await grape
+        .connect(caller)
+        .approve(
+          upgrade.address,
+          BigNumber.from((50 + 80 + 110) * mintAmount).mul(
+            BigNumber.from(10).pow(18),
+          ),
+        )
+      await vintageWine
+        .connect(caller)
+        .approve(
+          upgrade.address,
+          BigNumber.from((3000 + 10000 + 20000) * mintAmount).mul(
+            BigNumber.from(10).pow(18),
+          ),
+        )
+      // 98 % of grape and vintageWine token will be burned when mint , 2% will be in Upgrade(Tools) contract
+
+      // Level would be 0 ~ 2 , means there are 3 types of tools
+      // level 0 supply: 0, maxSupply: 2500, priceVintageWine: 3000 * 1e18, priceGrape: 50 * 1e18, yield: 1
+      // level 1 supply: 0, maxSupply: 2200, priceVintageWine: 10000 * 1e18, priceGrape: 80 * 1e18, yield: 3
+      // level 2 supply: 0, maxSupply: 2000, priceVintageWine: 20000 * 1e18, priceGrape: 110 * 1e18, yield: 5
+
+      await upgrade.mintUpgrade(0, mintAmount) // level, amount
+      await upgrade.mintUpgrade(1, mintAmount)
+      await upgrade.mintUpgrade(2, mintAmount)
+      await upgrade.connect(caller).mintUpgrade(0, mintAmount)
+      await upgrade.connect(caller).mintUpgrade(1, mintAmount)
+      await upgrade.connect(caller).mintUpgrade(2, mintAmount)
+    })
+  })
   describe('Winery', function () {
     it('Initialize contract', async function () {
       // We need to do this in real production
@@ -180,13 +244,6 @@ describe('Wine Connoisseur game', function () {
       //   cellar.address,
       //   wineryProgression.address,
       // )
-
-      // Check contract address is right
-      expect(await winery.wineryProgression()).to.equal(
-        wineryProgression.address,
-      )
-      expect(await winery.grape()).to.equal(grape.address)
-      expect(await winery.vintner()).to.equal(vintner.address)
     })
     it('Stake Vinter ERC721 to Winery', async function () {
       // 1 ~ 50 is promotion for owner
@@ -196,6 +253,7 @@ describe('Wine Connoisseur game', function () {
       expect(await vintner.ownerOf(51)).to.equal(caller.address)
       expect(await vintner.ownerOf(55)).to.equal(caller.address)
 
+      // Would be reverted because caller is not owner of 1,2,3 Vintner
       await expect(winery.connect(caller).stakeMany([1, 2, 3], [])).to.be
         .reverted
 
@@ -210,7 +268,7 @@ describe('Wine Connoisseur game', function () {
        * - Once the mint is finished, it is provable that this randomness was not tampered with by providing the seed
        * - Vintner type can be set only once
        */
-      await vintner.connect(oracle).setVintnerType(51, 1) // token ID, vintner type
+      await vintner.connect(oracle).setVintnerType(51, 1) // token ID, vintner type - 1 for normal ,2 for master
       await vintner.connect(oracle).setVintnerType(52, 1)
       await vintner.connect(oracle).setVintnerType(53, 1)
       await vintner.connect(oracle).setVintnerType(54, 1)
@@ -222,5 +280,86 @@ describe('Wine Connoisseur game', function () {
       await vintner.connect(caller).setApprovalForAll(winery.address, true)
       await winery.connect(caller).stakeMany([51, 52, 53, 54, 55], [])
     })
+    it('Stake Tools ERC721 to Winery for owner', async function () {
+      // 1 ~ 6 for owner - each level have 2
+      expect(await upgrade.ownerOf(1)).to.equal(owner.address)
+      expect(await upgrade.ownerOf(6)).to.equal(owner.address)
+      // 7 ~ 12 for caller
+      expect(await upgrade.ownerOf(7)).to.equal(caller.address)
+      expect(await upgrade.ownerOf(12)).to.equal(caller.address)
+
+      await upgrade.setApprovalForAll(winery.address, true)
+
+      // Tool amount would be less thaan Vintner amount
+      await expect(winery.stakeMany([], [1, 2, 3, 4, 5, 6])).to.be.revertedWith(
+        'Needs at least vintner for each tool',
+      )
+      // Deposit grape to upgrade the skill point to be able to deposit level3 Tool
+      await expect(winery.stakeMany([], [1, 2, 3, 4, 5])).to.be.revertedWith(
+        "You can't equip that tool",
+      )
+      await grape.approve(
+        wineryProgression.address,
+        BigNumber.from(1001).mul(BigNumber.from(10).pow(18)),
+      )
+      await wineryProgression.depositGrape(
+        BigNumber.from(1001).mul(BigNumber.from(10).pow(18)),
+      )
+      const UPGRADES_ID = 4
+
+      await wineryProgression.spendSkillPoints(UPGRADES_ID, 1)
+      await wineryProgression.spendSkillPoints(UPGRADES_ID, 2)
+      await winery.stakeMany([], [1, 2, 3, 4, 5])
+
+      // await winery.connect(caller.address).stakeMany([], [6, 7, 8, 9, 10])
+    })
+    it('Stake Tools ERC721 to Winery for normal user', async function () {
+      await upgrade.connect(caller).setApprovalForAll(winery.address, true)
+
+      // Tool amount would be less thaan Vintner amount
+      await expect(
+        winery.connect(caller).stakeMany([], [7, 8, 9, 10, 11, 12]),
+      ).to.be.revertedWith('Needs at least vintner for each tool')
+      // Deposit grape to upgrade the skill point to be able to deposit level3 Tool
+      await expect(
+        winery.connect(caller).stakeMany([], [7, 8, 9, 10, 11]),
+      ).to.be.revertedWith("You can't equip that tool")
+      await grape
+        .connect(caller)
+        .approve(
+          wineryProgression.address,
+          BigNumber.from(1001).mul(BigNumber.from(10).pow(18)),
+        )
+      await wineryProgression
+        .connect(caller)
+        .depositGrape(BigNumber.from(1001).mul(BigNumber.from(10).pow(18)))
+      const UPGRADES_ID = 4
+
+      await wineryProgression.connect(caller).spendSkillPoints(UPGRADES_ID, 1)
+      await wineryProgression.connect(caller).spendSkillPoints(UPGRADES_ID, 2)
+      await winery.connect(caller).stakeMany([], [7, 8, 9, 10, 11])
+
+      // await winery.connect(caller.address).stakeMany([], [6, 7, 8, 9, 10])
+    })
+    it('Claim vintageWine', async function () {
+      await winery.claimVintageWine()
+      await winery.connect(caller).claimVintageWine()
+    })
+    it('Unstake Vintners', async function () {
+      // To unstake token , 2000 vintagewine would be tax, so it would be reverted unless Vintner make 2000 vintageWine tokens
+      await expect(
+        winery.unstakeVintnersAndUpgrades([1, 2, 3], []),
+      ).to.be.revertedWith('Needs at least vintner for each tool')
+      await expect(
+        winery.unstakeVintnersAndUpgrades([1, 2, 3], [1, 2, 3]),
+      ).to.be.revertedWith('Not enough VintageWine to pay the unstake penalty.')
+      // await expect(
+      //   winery.connect(caller).unstakeVintnersAndUpgrades([51, 52, 53], []),
+      // )
+    })
+    // it('Withdraw Vintner', async function () {
+    //   await winery.withdrawVintners([1, 2, 3])
+    //   await winery.connect(caller).withdrawVintners([51, 52, 53])
+    // })
   })
 })
