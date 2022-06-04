@@ -177,9 +177,55 @@ describe('Wine Connoisseur game', function () {
       await vintner.connect(caller).mintVintnerWithVINTAGEWINE(3) // each token for 20,000 vintageWine
       expect(await vintner.vintnersMintedWithVINTAGEWINE()).to.equal(3)
     })
+    it('Get Info for Owner', async function () {
+      /**
+       * @param
+       * _owner
+       * _offset
+       * _maxSize
+       */
+      const result1 = await upgrade.batchedUpgradesOfOwner(owner.address, 0, 10)
+      const result2 = await upgrade.batchedUpgradesOfOwner(caller.address, 3, 3)
+    })
   })
   describe('Tools 721 token', function () {
+    it('Add level', async function () {
+      // 3 types of level was made in constructor
+      /***
+       * @Params
+       * maxSupply
+       * priceVintageWine
+       * priceGrape
+       * yield
+       */
+      upgrade.addLevel(
+        1800,
+        BigNumber.from(25000).mul(BigNumber.from(10).pow(18)),
+        BigNumber.from(130).mul(BigNumber.from(10).pow(18)),
+        7,
+      )
+    })
+    it('Change Level', async function () {
+      it('Add level', async function () {
+        // 3 types of level was made in constructor
+        /***
+         * @Params
+         * maxSupply
+         * priceVintageWine
+         * priceGrape
+         * yield
+         */
+        upgrade.changeLevel(
+          3,
+          1500,
+          BigNumber.from(26000).mul(BigNumber.from(10).pow(18)),
+          BigNumber.from(150).mul(BigNumber.from(10).pow(18)),
+          7,
+        )
+      })
+    })
     it('Mint Tools ERC721 tokens', async function () {
+      // Transfer grape and vintageWine to allow caller buy the tools nft
       await grape.transfer(
         caller.address,
         BigNumber.from(200000).mul(BigNumber.from(10).pow(18)),
@@ -231,6 +277,16 @@ describe('Wine Connoisseur game', function () {
       await upgrade.connect(caller).mintUpgrade(0, mintAmount)
       await upgrade.connect(caller).mintUpgrade(1, mintAmount)
       await upgrade.connect(caller).mintUpgrade(2, mintAmount)
+    })
+    it('Get Info for Owner', async function () {
+      /**
+       * @param
+       * _owner
+       * _offset
+       * _maxSize
+       */
+      const result1 = await upgrade.batchedUpgradesOfOwner(owner.address, 0, 10)
+      const result2 = await upgrade.batchedUpgradesOfOwner(caller.address, 3, 3)
     })
   })
   describe('Winery', function () {
@@ -341,6 +397,16 @@ describe('Wine Connoisseur game', function () {
 
       // await winery.connect(caller.address).stakeMany([], [6, 7, 8, 9, 10])
     })
+    it('Get Staked Vintner and Tool for user', async function () {
+      /**
+       * @param
+       * _owner
+       * _offset
+       * _maxSize
+       */
+      const result1 = await winery.batchedStakesOfOwner(owner.address, 0, 10)
+      const result2 = await winery.batchedToolsOfOwner(caller.address, 0, 10)
+    })
     it('Claim vintageWine', async function () {
       await winery.claimVintageWine()
       await winery.connect(caller).claimVintageWine()
@@ -357,9 +423,9 @@ describe('Wine Connoisseur game', function () {
       //   winery.connect(caller).unstakeVintnersAndUpgrades([51, 52, 53], []),
       // )
     })
-    // it('Withdraw Vintner', async function () {
-    //   await winery.withdrawVintners([1, 2, 3])
-    //   await winery.connect(caller).withdrawVintners([51, 52, 53])
-    // })
+    it('Withdraw Vintner', async function () {
+      await winery.withdrawVintners([1, 2, 3])
+      await winery.connect(caller).withdrawVintners([51, 52, 53])
+    })
   })
 })

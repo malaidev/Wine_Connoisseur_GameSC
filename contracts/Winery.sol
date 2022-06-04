@@ -12,14 +12,38 @@ import "./Upgrade.sol";
 import "./VintageWine.sol";
 
 interface IWineryProgression {
-    function getFatigueSkillModifier(address owner) external view returns (uint256);
-    function getBurnSkillModifier(address owner) external view returns (uint256);
-    function getCellarSkillModifier(address owner) external view returns (uint256);
-    function getMasterVintnerSkillModifier(address owner, uint256 masterVintnerNumber) external view returns (uint256);
+    function getFatigueSkillModifier(address owner)
+        external
+        view
+        returns (uint256);
+
+    function getBurnSkillModifier(address owner)
+        external
+        view
+        returns (uint256);
+
+    function getCellarSkillModifier(address owner)
+        external
+        view
+        returns (uint256);
+
+    function getMasterVintnerSkillModifier(
+        address owner,
+        uint256 masterVintnerNumber
+    ) external view returns (uint256);
+
     function getMaxLevelUpgrade(address owner) external view returns (uint256);
-    function getMaxNumberVintners(address owner) external view returns (uint256);
+
+    function getMaxNumberVintners(address owner)
+        external
+        view
+        returns (uint256);
+
     // function getMafiaModifier(address owner) external view returns (uint256);
-    function getVintageWineStorage(address owner) external view returns (uint256);
+    function getVintageWineStorage(address owner)
+        external
+        view
+        returns (uint256);
 }
 
 // interface IMafia {
@@ -29,7 +53,8 @@ interface IWineryProgression {
 
 contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     // Constants
-    address public constant DEAD_ADDRESS = 0x000000000000000000000000000000000000dEaD;
+    address public constant DEAD_ADDRESS =
+        0x000000000000000000000000000000000000dEaD;
     uint256 public constant CLAIM_VINTAGEWINE_CONTRIBUTION_PERCENTAGE = 10;
     uint256 public constant CLAIM_VINTAGEWINE_BURN_PERCENTAGE = 10;
     uint256 public constant MAX_FATIGUE = 100000000000000;
@@ -78,10 +103,18 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     IGrape public grape;
     address public cellarAddress;
     IWineryProgression public wineryProgression;
+
     // IMafia public mafia;
     // address public mafiaAddress;
 
-    function initialize(Vintner _vintner, Upgrade _upgrade, VintageWine _vintageWine, address _grape, address _cellarAddress, address _wineryProgression) public initializer {
+    function initialize(
+        Vintner _vintner,
+        Upgrade _upgrade,
+        VintageWine _vintageWine,
+        address _grape,
+        address _cellarAddress,
+        address _wineryProgression
+    ) public initializer {
         vintner = _vintner;
         grape = IGrape(_grape);
         upgrade = _upgrade;
@@ -95,45 +128,57 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         unstakePenalty = 2000 * 1e18; // Everytime someone unstake they need to pay this tax from the unclaimed amount
         fatigueTuner = 100;
 
-      ///@dev as there is no constructor, we need to initialise the OwnableUpgradeable explicitly
-       __Ownable_init();
+        ///@dev as there is no constructor, we need to initialise the OwnableUpgradeable explicitly
+        __Ownable_init();
     }
+
     ///@dev required by the OZ UUPS module
     function _authorizeUpgrade(address) internal override onlyOwner {}
-
 
     // Setters
     function setVintageWine(VintageWine _vintageWine) external onlyOwner {
         vintageWine = _vintageWine;
     }
+
     function setCellarAddress(address _cellarAddress) external onlyOwner {
         cellarAddress = _cellarAddress;
     }
+
     function setVintner(Vintner _vintner) external onlyOwner {
         vintner = _vintner;
     }
+
     function setUpgrade(Upgrade _upgrade) external onlyOwner {
         upgrade = _upgrade;
     }
+
     function setYieldPPS(uint256 _yieldPPS) external onlyOwner {
         yieldPPS = _yieldPPS;
     }
+
     function setGrapeResetCost(uint256 _grapeResetCost) external onlyOwner {
         grapeResetCost = _grapeResetCost;
     }
+
     function setUnstakePenalty(uint256 _unstakePenalty) external onlyOwner {
         unstakePenalty = _unstakePenalty;
     }
+
     function setFatigueTuner(uint256 _fatigueTuner) external onlyOwner {
         fatigueTuner = _fatigueTuner;
     }
-    
+
     function setGrape(address _grape) external onlyOwner {
         grape = IGrape(_grape);
     }
-    function setWineryProgression(address _wineryProgression) external onlyOwner {
+
+    function setWineryProgression(address _wineryProgression)
+        external
+        onlyOwner
+    {
         wineryProgression = IWineryProgression(_wineryProgression);
     }
+
     // function setMafia(address _mafia) external onlyOwner {
     //     mafiaAddress = _mafia;
     //     mafia = IMafia(_mafia);
@@ -145,13 +190,17 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
      * This function is called in _updateState
      */
 
-    function fatiguePerMinuteCalculation(uint256 _ppm) public pure returns (uint256) {
-        // NOTE: fatiguePerMinute[_owner] = 8610000000 + 166000000  * totalPPM[_owner] + -220833 * totalPPM[_owner]* totalPPM[_owner]  + 463 * totalPPM[_owner]*totalPPM[_owner]*totalPPM[_owner]; 
+    function fatiguePerMinuteCalculation(uint256 _ppm)
+        public
+        pure
+        returns (uint256)
+    {
+        // NOTE: fatiguePerMinute[_owner] = 8610000000 + 166000000  * totalPPM[_owner] + -220833 * totalPPM[_owner]* totalPPM[_owner]  + 463 * totalPPM[_owner]*totalPPM[_owner]*totalPPM[_owner];
         uint256 a = 463;
         uint256 b = 220833;
         uint256 c = 166000000;
         uint256 d = 8610000000;
-        if(_ppm == 0){
+        if (_ppm == 0) {
             return 0;
         }
         return d + c * _ppm + a * _ppm * _ppm * _ppm - b * _ppm * _ppm;
@@ -160,24 +209,32 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     /**
      * Returns the timestamp of when the entire winery will be fatigued
      */
-    function timeUntilFatiguedCalculation(uint256 _startTime, uint256 _fatigue, uint256 _fatiguePerMinute) public pure returns (uint256) {
-        if(_fatiguePerMinute == 0){
+    function timeUntilFatiguedCalculation(
+        uint256 _startTime,
+        uint256 _fatigue,
+        uint256 _fatiguePerMinute
+    ) public pure returns (uint256) {
+        if (_fatiguePerMinute == 0) {
             return _startTime + 31536000; // 1 year in seconds, arbitrary long duration
         }
-        return _startTime + 60 * ( MAX_FATIGUE - _fatigue ) / _fatiguePerMinute;
+        return _startTime + (60 * (MAX_FATIGUE - _fatigue)) / _fatiguePerMinute;
     }
 
     /**
      * Returns the timestamp of when the vintner will be fully rested
      */
-     function restingTimeCalculation(uint256 _vintnerType, uint256 _masterVintnerType, uint256 _fatigue) public pure returns (uint256) {
+    function restingTimeCalculation(
+        uint256 _vintnerType,
+        uint256 _masterVintnerType,
+        uint256 _fatigue
+    ) public pure returns (uint256) {
         uint256 maxTime = 43200; //12*60*60
-        if( _vintnerType == _masterVintnerType){
+        if (_vintnerType == _masterVintnerType) {
             maxTime = maxTime / 2; // master vintners rest half of the time of regular vintners
         }
 
-        if(_fatigue > MAX_FATIGUE / 2){
-            return maxTime * _fatigue / MAX_FATIGUE;
+        if (_fatigue > MAX_FATIGUE / 2) {
+            return (maxTime * _fatigue) / MAX_FATIGUE;
         }
 
         return maxTime / 2; // minimum rest time is half of the maximum time
@@ -186,14 +243,31 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     /**
      * Returns vintner's vintageWine from vintnerVintageWine mapping
      */
-     function vintageWineAccruedCalculation(uint256 _initialVintageWine, uint256 _deltaTime, uint256 _ppm, uint256 _modifier, uint256 _fatigue, uint256 _fatiguePerMinute, uint256 _yieldPPS) public pure returns (uint256) {
-        if(_fatigue >= MAX_FATIGUE){
+    function vintageWineAccruedCalculation(
+        uint256 _initialVintageWine,
+        uint256 _deltaTime,
+        uint256 _ppm,
+        uint256 _modifier,
+        uint256 _fatigue,
+        uint256 _fatiguePerMinute,
+        uint256 _yieldPPS
+    ) public pure returns (uint256) {
+        if (_fatigue >= MAX_FATIGUE) {
             return _initialVintageWine;
         }
 
-        uint256 a = _deltaTime * _ppm * _yieldPPS * _modifier * (MAX_FATIGUE - _fatigue) / ( 100 * MAX_FATIGUE);
-        uint256 b = _deltaTime * _deltaTime * _ppm * _yieldPPS * _modifier * _fatiguePerMinute / (100 * 2 * 60 * MAX_FATIGUE);
-        if(a > b){
+        uint256 a = (_deltaTime *
+            _ppm *
+            _yieldPPS *
+            _modifier *
+            (MAX_FATIGUE - _fatigue)) / (100 * MAX_FATIGUE);
+        uint256 b = (_deltaTime *
+            _deltaTime *
+            _ppm *
+            _yieldPPS *
+            _modifier *
+            _fatiguePerMinute) / (100 * 2 * 60 * MAX_FATIGUE);
+        if (a > b) {
             return _initialVintageWine + a - b;
         }
 
@@ -202,12 +276,24 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     // Views
 
-    function getFatiguePerMinuteWithModifier(address _owner) public view returns (uint256) {
-        uint256 fatigueSkillModifier = wineryProgression.getFatigueSkillModifier(_owner);
-        return fatiguePerMinute[_owner]* (fatigueSkillModifier/100) * (fatigueTuner/100);
+    function getFatiguePerMinuteWithModifier(address _owner)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 fatigueSkillModifier = wineryProgression
+            .getFatigueSkillModifier(_owner);
+        return
+            fatiguePerMinute[_owner] *
+            fatigueSkillModifier *
+            (fatigueTuner / (100 * 100));
     }
 
-    function _getMasterVintnerNumber(address _owner) internal view returns (uint256) {
+    function _getMasterVintnerNumber(address _owner)
+        internal
+        view
+        returns (uint256)
+    {
         return numberOfStaked[_owner][1];
     }
 
@@ -215,7 +301,8 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
      * Returns the current vintner's fatigue
      */
     function getFatigueAccrued(address _owner) public view returns (uint256) {
-        uint256 fatigue = (block.timestamp - startTimeStamp[_owner]) * getFatiguePerMinuteWithModifier(_owner) / 60;
+        uint256 fatigue = ((block.timestamp - startTimeStamp[_owner]) *
+            getFatiguePerMinuteWithModifier(_owner)) / 60;
         fatigue += wineryFatigue[_owner];
         if (fatigue > MAX_FATIGUE) {
             fatigue = MAX_FATIGUE;
@@ -223,25 +310,47 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         return fatigue;
     }
 
-    function getTimeUntilFatigued(address _owner) public view returns (uint256) {
-        return timeUntilFatiguedCalculation(startTimeStamp[_owner], wineryFatigue[_owner], getFatiguePerMinuteWithModifier(_owner));
+    function getTimeUntilFatigued(address _owner)
+        public
+        view
+        returns (uint256)
+    {
+        return
+            timeUntilFatiguedCalculation(
+                startTimeStamp[_owner],
+                wineryFatigue[_owner],
+                getFatiguePerMinuteWithModifier(_owner)
+            );
     }
 
-    function getRestingTime(uint256 _tokenId, address _owner) public view returns (uint256) {
-        return restingTimeCalculation(vintner.getType(_tokenId), vintner.MASTER_VINTNER_TYPE(), getFatigueAccrued(_owner));
+    function getRestingTime(uint256 _tokenId, address _owner)
+        public
+        view
+        returns (uint256)
+    {
+        return
+            restingTimeCalculation(
+                vintner.getType(_tokenId),
+                vintner.MASTER_VINTNER_TYPE(),
+                getFatigueAccrued(_owner)
+            );
     }
 
-    function getVintageWineAccrued(address _owner) public view returns (uint256) {
+    function getVintageWineAccrued(address _owner)
+        public
+        view
+        returns (uint256)
+    {
         // if fatigueLastUpdate = MAX_FATIGUE it means that wineryVintageWine already has the correct value for the vintageWine, since it didn't produce vintageWine since last update
         uint256 fatigueLastUpdate = wineryFatigue[_owner];
-        if(fatigueLastUpdate == MAX_FATIGUE){
+        if (fatigueLastUpdate == MAX_FATIGUE) {
             return wineryVintageWine[_owner];
         }
 
         uint256 timeUntilFatigued = getTimeUntilFatigued(_owner);
 
         uint256 endTimestamp;
-        if(block.timestamp >= timeUntilFatigued){
+        if (block.timestamp >= timeUntilFatigued) {
             endTimestamp = timeUntilFatigued;
         } else {
             endTimestamp = block.timestamp;
@@ -249,22 +358,36 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
         uint256 ppm = getTotalPPM(_owner);
 
-        uint256 masterVintnerSkillModifier = wineryProgression.getMasterVintnerSkillModifier(_owner, _getMasterVintnerNumber(_owner));
+        uint256 masterVintnerSkillModifier = wineryProgression
+            .getMasterVintnerSkillModifier(
+                _owner,
+                _getMasterVintnerNumber(_owner)
+            );
 
         uint256 delta = endTimestamp - startTimeStamp[_owner];
 
-        uint256 newVintageWineAmount = vintageWineAccruedCalculation(wineryVintageWine[_owner], delta, ppm, masterVintnerSkillModifier, fatigueLastUpdate, getFatiguePerMinuteWithModifier(_owner), yieldPPS);
+        uint256 newVintageWineAmount = vintageWineAccruedCalculation(
+            wineryVintageWine[_owner],
+            delta,
+            ppm,
+            masterVintnerSkillModifier,
+            fatigueLastUpdate,
+            getFatiguePerMinuteWithModifier(_owner),
+            yieldPPS
+        );
 
-        uint256 maxVintageWine = wineryProgression.getVintageWineStorage(_owner);
+        uint256 maxVintageWine = wineryProgression.getVintageWineStorage(
+            _owner
+        );
 
-        if(newVintageWineAmount > maxVintageWine){
+        if (newVintageWineAmount > maxVintageWine) {
             return maxVintageWine;
         }
         return newVintageWineAmount;
     }
 
     /**
-     * Calculates the total PPM staked for a winery. 
+     * Calculates the total PPM staked for a winery.
      * This will also be used in the fatiguePerMinute calculation
      */
     function getTotalPPM(address _owner) public view returns (uint256) {
@@ -273,7 +396,7 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     function _updatefatiguePerMinute(address _owner) internal {
         uint256 ppm = totalPPM[_owner];
-        if(ppm == 0){
+        if (ppm == 0) {
             delete wineryFatigue[_owner];
         }
         fatiguePerMinute[_owner] = fatiguePerMinuteCalculation(ppm);
@@ -281,8 +404,12 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     //Claim
     function _claimVintageWine(address _owner) internal {
-        uint256 cellarSkillModifier = wineryProgression.getCellarSkillModifier(_owner);
-        uint256 burnSkillModifier = wineryProgression.getBurnSkillModifier(_owner);
+        uint256 cellarSkillModifier = wineryProgression.getCellarSkillModifier(
+            _owner
+        );
+        uint256 burnSkillModifier = wineryProgression.getBurnSkillModifier(
+            _owner
+        );
 
         uint256 totalClaimed = getVintageWineAccrued(_owner);
 
@@ -292,8 +419,11 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
         startTimeStamp[_owner] = block.timestamp;
 
-        uint256 taxAmountCellar = totalClaimed * (CLAIM_VINTAGEWINE_CONTRIBUTION_PERCENTAGE - cellarSkillModifier) / 100;
-        uint256 taxAmountBurn = totalClaimed * (CLAIM_VINTAGEWINE_BURN_PERCENTAGE - burnSkillModifier) / 100;
+        uint256 taxAmountCellar = (totalClaimed *
+            (CLAIM_VINTAGEWINE_CONTRIBUTION_PERCENTAGE - cellarSkillModifier)) /
+            100;
+        uint256 taxAmountBurn = (totalClaimed *
+            (CLAIM_VINTAGEWINE_BURN_PERCENTAGE - burnSkillModifier)) / 100;
 
         // uint256 taxAmountMafia = 0;
         // if(mafiaAddress != address(0) && mafia.mafiaIsActive()){
@@ -344,7 +474,10 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     function _taxUnstake(address _owner, uint256 _taxableAmount) internal {
         uint256 totalClaimed = getVintageWineAccrued(_owner);
         uint256 penaltyCost = _taxableAmount * unstakePenalty;
-        require(totalClaimed >= penaltyCost, "Not enough VintageWine to pay the unstake penalty.");
+        require(
+            totalClaimed >= penaltyCost,
+            "Not enough VintageWine to pay the unstake penalty."
+        );
 
         wineryVintageWine[_owner] = totalClaimed - penaltyCost;
 
@@ -353,40 +486,62 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         startTimeStamp[_owner] = block.timestamp;
     }
 
-
-    function unstakeVintnersAndUpgrades(uint256[] calldata _vintnerIds, uint256[] calldata _upgradeIds) public {
+    function unstakeVintnersAndUpgrades(
+        uint256[] calldata _vintnerIds,
+        uint256[] calldata _upgradeIds
+    ) public {
         address owner = msg.sender;
         // Check 1:1 correspondency between vintner and upgrade
-        require(numberOfStaked[owner][0] + numberOfStaked[owner][1] >= _vintnerIds.length, "Invalid number of vintners");
-        require(ownedUpgradeStakesBalance[owner] >= _upgradeIds.length, "Invalid number of tools");
-        require(numberOfStaked[owner][0] + numberOfStaked[owner][1] - _vintnerIds.length >= ownedUpgradeStakesBalance[owner] - _upgradeIds.length, "Needs at least vintner for each tool");
+        require(
+            numberOfStaked[owner][0] + numberOfStaked[owner][1] >=
+                _vintnerIds.length,
+            "Invalid number of vintners"
+        );
+        require(
+            ownedUpgradeStakesBalance[owner] >= _upgradeIds.length,
+            "Invalid number of tools"
+        );
+        require(
+            numberOfStaked[owner][0] +
+                numberOfStaked[owner][1] -
+                _vintnerIds.length >=
+                ownedUpgradeStakesBalance[owner] - _upgradeIds.length,
+            "Needs at least vintner for each tool"
+        );
 
         uint256 upgradeLength = _upgradeIds.length;
         uint256 vintnerLength = _vintnerIds.length;
 
         _taxUnstake(owner, upgradeLength + vintnerLength);
-        
-        for (uint256 i = 0; i < upgradeLength; i++) { //unstake upgrades
+
+        for (uint256 i = 0; i < upgradeLength; i++) {
+            //unstake upgrades
             uint256 upgradeId = _upgradeIds[i];
 
-            require(stakedUpgrades[upgradeId] == owner, "You don't own this tool");
+            require(
+                stakedUpgrades[upgradeId] == owner,
+                "You don't own this tool"
+            );
 
             upgrade.transferFrom(address(this), owner, upgradeId);
 
             totalPPM[owner] -= upgrade.getYield(upgradeId);
 
             _removeUpgrade(upgradeId, owner);
-
         }
 
-        for (uint256 i = 0; i < vintnerLength; i++) { //unstake vintners
+        for (uint256 i = 0; i < vintnerLength; i++) {
+            //unstake vintners
             uint256 vintnerId = _vintnerIds[i];
 
-            require(stakedVintners[vintnerId] == owner, "You don't own this token");
+            require(
+                stakedVintners[vintnerId] == owner,
+                "You don't own this token"
+            );
             require(restingVintners[vintnerId] == 0, "Vintner is resting");
 
-            if(vintner.getType(vintnerId) == vintner.MASTER_VINTNER_TYPE()){
-                numberOfStaked[owner][1]--; 
+            if (vintner.getType(vintnerId) == vintner.MASTER_VINTNER_TYPE()) {
+                numberOfStaked[owner][1]--;
             } else {
                 numberOfStaked[owner][0]--;
             }
@@ -401,32 +556,50 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     // Stake
 
-     /**
+    /**
      * This function updates stake vintners and upgrades
      * The upgrades are paired with the vintner the upgrade will be applied
      */
-    function stakeMany(uint256[] calldata _vintnerIds, uint256[] calldata _upgradeIds) public {
+    function stakeMany(
+        uint256[] calldata _vintnerIds,
+        uint256[] calldata _upgradeIds
+    ) public {
         require(gameStarted(), "The game has not started");
 
         address owner = msg.sender;
 
-        uint256 maxNumberVintners = wineryProgression.getMaxNumberVintners(owner);
-        uint256 vintnersAfterStaking = _vintnerIds.length + numberOfStaked[owner][0] + numberOfStaked[owner][1];
-        require(maxNumberVintners >= vintnersAfterStaking, "You can't stake that many vintners");
+        uint256 maxNumberVintners = wineryProgression.getMaxNumberVintners(
+            owner
+        );
+        uint256 vintnersAfterStaking = _vintnerIds.length +
+            numberOfStaked[owner][0] +
+            numberOfStaked[owner][1];
+        require(
+            maxNumberVintners >= vintnersAfterStaking,
+            "You can't stake that many vintners"
+        );
 
         // Check 1:1 correspondency between vintner and upgrade
-        require(vintnersAfterStaking >= ownedUpgradeStakesBalance[owner] + _upgradeIds.length, "Needs at least vintner for each tool");
+        require(
+            vintnersAfterStaking >=
+                ownedUpgradeStakesBalance[owner] + _upgradeIds.length,
+            "Needs at least vintner for each tool"
+        );
 
         _updateState(owner);
 
         uint256 vintnerLength = _vintnerIds.length;
-        for (uint256 i = 0; i < vintnerLength; i++) { //stakes vintner
+        for (uint256 i = 0; i < vintnerLength; i++) {
+            //stakes vintner
             uint256 vintnerId = _vintnerIds[i];
 
-            require(vintner.ownerOf(vintnerId) == owner, "You don't own this token");
+            require(
+                vintner.ownerOf(vintnerId) == owner,
+                "You don't own this token"
+            );
             require(vintner.getType(vintnerId) > 0, "Vintner not yet revealed");
 
-            if(vintner.getType(vintnerId) == vintner.MASTER_VINTNER_TYPE()){
+            if (vintner.getType(vintnerId) == vintner.MASTER_VINTNER_TYPE()) {
                 numberOfStaked[owner][1]++;
             } else {
                 numberOfStaked[owner][0]++;
@@ -440,18 +613,24 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         }
         uint256 maxLevelUpgrade = wineryProgression.getMaxLevelUpgrade(owner);
         uint256 upgradeLength = _upgradeIds.length;
-        for (uint256 i = 0; i < upgradeLength; i++) { //stakes upgrades
+        for (uint256 i = 0; i < upgradeLength; i++) {
+            //stakes upgrades
             uint256 upgradeId = _upgradeIds[i];
 
-            require(upgrade.ownerOf(upgradeId) == owner, "You don't own this tool");
-            require(upgrade.getLevel(upgradeId) <= maxLevelUpgrade, "You can't equip that tool");
+            require(
+                upgrade.ownerOf(upgradeId) == owner,
+                "You don't own this tool"
+            );
+            require(
+                upgrade.getLevel(upgradeId) <= maxLevelUpgrade,
+                "You can't equip that tool"
+            );
 
             totalPPM[owner] += upgrade.getYield(upgradeId);
 
             _addUpgradeToWinery(upgradeId, owner);
 
             upgrade.transferFrom(owner, address(this), upgradeId);
-
         }
         _updatefatiguePerMinute(owner);
     }
@@ -463,8 +642,14 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
             uint256 _vintnerId = _vintnerIds[i];
 
             require(restingVintners[_vintnerId] != 0, "Vintner is not resting");
-            require(stakedVintners[_vintnerId] == owner, "You don't own this vintner");
-            require(block.timestamp >= restingVintners[_vintnerId], "Vintner is still resting");
+            require(
+                stakedVintners[_vintnerId] == owner,
+                "You don't own this vintner"
+            );
+            require(
+                block.timestamp >= restingVintners[_vintnerId],
+                "Vintner is still resting"
+            );
 
             _removeVintnerFromCooldown(_vintnerId, owner);
 
@@ -475,21 +660,37 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     function reStakeRestedVintners(uint256[] calldata _vintnerIds) public {
         address owner = msg.sender;
 
-        uint256 maxNumberVintners = wineryProgression.getMaxNumberVintners(owner);
-        uint256 vintnersAfterStaking = _vintnerIds.length + numberOfStaked[owner][0] + numberOfStaked[owner][1];
-        require(maxNumberVintners >= vintnersAfterStaking, "You can't stake that many vintners");
+        uint256 maxNumberVintners = wineryProgression.getMaxNumberVintners(
+            owner
+        );
+        uint256 vintnersAfterStaking = _vintnerIds.length +
+            numberOfStaked[owner][0] +
+            numberOfStaked[owner][1];
+        require(
+            maxNumberVintners >= vintnersAfterStaking,
+            "You can't stake that many vintners"
+        );
+
+        _updateState(owner);
 
         uint256 vintnerLength = _vintnerIds.length;
-        for (uint256 i = 0; i < vintnerLength; i++) { //stakes vintner
+        for (uint256 i = 0; i < vintnerLength; i++) {
+            //stakes vintner
             uint256 _vintnerId = _vintnerIds[i];
 
             require(restingVintners[_vintnerId] != 0, "Vintner is not resting");
-            require(stakedVintners[_vintnerId] == owner, "You don't own this vintner");
-            require(block.timestamp >= restingVintners[_vintnerId], "Vintner is still resting");
+            require(
+                stakedVintners[_vintnerId] == owner,
+                "You don't own this vintner"
+            );
+            require(
+                block.timestamp >= restingVintners[_vintnerId],
+                "Vintner is still resting"
+            );
 
             delete restingVintners[_vintnerId];
 
-            if(vintner.getType(_vintnerId) == vintner.MASTER_VINTNER_TYPE()){
+            if (vintner.getType(_vintnerId) == vintner.MASTER_VINTNER_TYPE()) {
                 numberOfStaked[owner][1]++;
             } else {
                 numberOfStaked[owner][0]++;
@@ -516,12 +717,17 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         ownedUpgradeStakesBalance[_owner]++;
     }
 
-    function _moveVintnerToCooldown(uint256 _vintnerId, address _owner) internal {
-        uint256 endTimestamp = block.timestamp + getRestingTime(_vintnerId, _owner);
+    function _moveVintnerToCooldown(uint256 _vintnerId, address _owner)
+        internal
+    {
+        uint256 endTimestamp = block.timestamp +
+            getRestingTime(_vintnerId, _owner);
         restingVintners[_vintnerId] = endTimestamp;
     }
 
-    function _removeVintnerFromCooldown(uint256 _vintnerId, address _owner) internal {
+    function _removeVintnerFromCooldown(uint256 _vintnerId, address _owner)
+        internal
+    {
         delete restingVintners[_vintnerId];
         delete stakedVintners[_vintnerId];
 
@@ -542,7 +748,7 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
     function _removeUpgrade(uint256 _upgradeId, address _owner) internal {
         delete stakedUpgrades[_upgradeId];
-        
+
         uint256 lastTokenIndex = ownedUpgradeStakesBalance[_owner] - 1;
         uint256 tokenIndex = ownedUpgradeStakesIndex[_upgradeId];
 
@@ -565,7 +771,10 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
     }
 
     function setStartTime(uint256 _startTime) external onlyOwner {
-        require (_startTime >= block.timestamp, "startTime cannot be in the past");
+        require(
+            _startTime >= block.timestamp,
+            "startTime cannot be in the past"
+        );
         require(!gameStarted(), "game already started");
         startTime = _startTime;
     }
@@ -591,7 +800,9 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         if (_offset + _maxSize >= ownedVintnerStakesBalance[_owner]) {
             outputSize = ownedVintnerStakesBalance[_owner] - _offset;
         }
-        StakedVintnerInfo[] memory outputs = new StakedVintnerInfo[](outputSize);
+        StakedVintnerInfo[] memory outputs = new StakedVintnerInfo[](
+            outputSize
+        );
 
         for (uint256 i = 0; i < outputSize; i++) {
             uint256 vintnerId = ownedVintnerStakes[_owner][_offset + i];
@@ -638,5 +849,4 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 
         return outputs;
     }
-
 }

@@ -1,6 +1,6 @@
 /**
  *Submitted for verification at snowtrace.io on 2022-01-12
-*/
+ */
 
 /*
 
@@ -38,10 +38,7 @@ abstract contract Context {
     }
 }
 
-
 // File @openzeppelin/contracts/token/ERC20/IERC20.sol@v3.4.2
-
-
 
 pragma solidity >=0.6.0;
 
@@ -66,7 +63,9 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transfer(address recipient, uint256 amount) external returns (bool);
+    function transfer(address recipient, uint256 amount)
+        external
+        returns (bool);
 
     /**
      * @dev Returns the remaining number of tokens that `spender` will be
@@ -75,7 +74,10 @@ interface IERC20 {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address owner, address spender) external view returns (uint256);
+    function allowance(address owner, address spender)
+        external
+        view
+        returns (uint256);
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
@@ -102,7 +104,11 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -116,13 +122,14 @@ interface IERC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 }
 
-
 // File @openzeppelin/contracts/math/SafeMath.sol@v3.4.2
-
-
 
 pragma solidity >=0.6.0;
 
@@ -145,7 +152,11 @@ library SafeMath {
      *
      * _Available since v3.4._
      */
-    function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+    function tryAdd(uint256 a, uint256 b)
+        internal
+        pure
+        returns (bool, uint256)
+    {
         uint256 c = a + b;
         if (c < a) return (false, 0);
         return (true, c);
@@ -156,7 +167,11 @@ library SafeMath {
      *
      * _Available since v3.4._
      */
-    function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+    function trySub(uint256 a, uint256 b)
+        internal
+        pure
+        returns (bool, uint256)
+    {
         if (b > a) return (false, 0);
         return (true, a - b);
     }
@@ -166,7 +181,11 @@ library SafeMath {
      *
      * _Available since v3.4._
      */
-    function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+    function tryMul(uint256 a, uint256 b)
+        internal
+        pure
+        returns (bool, uint256)
+    {
         // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
         // benefit is lost if 'b' is also tested.
         // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
@@ -181,7 +200,11 @@ library SafeMath {
      *
      * _Available since v3.4._
      */
-    function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+    function tryDiv(uint256 a, uint256 b)
+        internal
+        pure
+        returns (bool, uint256)
+    {
         if (b == 0) return (false, 0);
         return (true, a / b);
     }
@@ -191,7 +214,11 @@ library SafeMath {
      *
      * _Available since v3.4._
      */
-    function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {
+    function tryMod(uint256 a, uint256 b)
+        internal
+        pure
+        returns (bool, uint256)
+    {
         if (b == 0) return (false, 0);
         return (true, a % b);
     }
@@ -291,7 +318,11 @@ library SafeMath {
      *
      * - Subtraction cannot overflow.
      */
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function sub(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b <= a, errorMessage);
         return a - b;
     }
@@ -311,7 +342,11 @@ library SafeMath {
      *
      * - The divisor cannot be zero.
      */
-    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function div(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b > 0, errorMessage);
         return a / b;
     }
@@ -331,20 +366,19 @@ library SafeMath {
      *
      * - The divisor cannot be zero.
      */
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+    function mod(
+        uint256 a,
+        uint256 b,
+        string memory errorMessage
+    ) internal pure returns (uint256) {
         require(b > 0, errorMessage);
         return a % b;
     }
 }
 
-
 // File @openzeppelin/contracts/token/ERC20/ERC20.sol@v3.4.2
 
-
-
 pragma solidity >=0.6.0;
-
-
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -373,9 +407,9 @@ pragma solidity >=0.6.0;
 contract ERC20 is Context, IERC20 {
     using SafeMath for uint256;
 
-    mapping (address => uint256) private _balances;
+    mapping(address => uint256) private _balances;
 
-    mapping (address => mapping (address => uint256)) private _allowances;
+    mapping(address => mapping(address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
 
@@ -392,7 +426,7 @@ contract ERC20 is Context, IERC20 {
      * All three of these values are immutable: they can only be set once during
      * construction.
      */
-    constructor (string memory name_, string memory symbol_) public {
+    constructor(string memory name_, string memory symbol_) public {
         _name = name_;
         _symbol = symbol_;
         _decimals = 18;
@@ -440,7 +474,13 @@ contract ERC20 is Context, IERC20 {
     /**
      * @dev See {IERC20-balanceOf}.
      */
-    function balanceOf(address account) public view virtual override returns (uint256) {
+    function balanceOf(address account)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         return _balances[account];
     }
 
@@ -452,7 +492,12 @@ contract ERC20 is Context, IERC20 {
      * - `recipient` cannot be the zero address.
      * - the caller must have a balance of at least `amount`.
      */
-    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
+    function transfer(address recipient, uint256 amount)
+        public
+        virtual
+        override
+        returns (bool)
+    {
         _transfer(_msgSender(), recipient, amount);
         return true;
     }
@@ -460,7 +505,13 @@ contract ERC20 is Context, IERC20 {
     /**
      * @dev See {IERC20-allowance}.
      */
-    function allowance(address owner, address spender) public view virtual override returns (uint256) {
+    function allowance(address owner, address spender)
+        public
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         return _allowances[owner][spender];
     }
 
@@ -471,7 +522,12 @@ contract ERC20 is Context, IERC20 {
      *
      * - `spender` cannot be the zero address.
      */
-    function approve(address spender, uint256 amount) public virtual override returns (bool) {
+    function approve(address spender, uint256 amount)
+        public
+        virtual
+        override
+        returns (bool)
+    {
         _approve(_msgSender(), spender, amount);
         return true;
     }
@@ -489,9 +545,20 @@ contract ERC20 is Context, IERC20 {
      * - the caller must have allowance for ``sender``'s tokens of at least
      * `amount`.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
+    function transferFrom(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) public virtual override returns (bool) {
         _transfer(sender, recipient, amount);
-        _approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, "ERC20: transfer amount exceeds allowance"));
+        _approve(
+            sender,
+            _msgSender(),
+            _allowances[sender][_msgSender()].sub(
+                amount,
+                "ERC20: transfer amount exceeds allowance"
+            )
+        );
         return true;
     }
 
@@ -507,8 +574,16 @@ contract ERC20 is Context, IERC20 {
      *
      * - `spender` cannot be the zero address.
      */
-    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].add(addedValue));
+    function increaseAllowance(address spender, uint256 addedValue)
+        public
+        virtual
+        returns (bool)
+    {
+        _approve(
+            _msgSender(),
+            spender,
+            _allowances[_msgSender()][spender].add(addedValue)
+        );
         return true;
     }
 
@@ -526,8 +601,19 @@ contract ERC20 is Context, IERC20 {
      * - `spender` must have allowance for the caller of at least
      * `subtractedValue`.
      */
-    function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender].sub(subtractedValue, "ERC20: decreased allowance below zero"));
+    function decreaseAllowance(address spender, uint256 subtractedValue)
+        public
+        virtual
+        returns (bool)
+    {
+        _approve(
+            _msgSender(),
+            spender,
+            _allowances[_msgSender()][spender].sub(
+                subtractedValue,
+                "ERC20: decreased allowance below zero"
+            )
+        );
         return true;
     }
 
@@ -545,13 +631,20 @@ contract ERC20 is Context, IERC20 {
      * - `recipient` cannot be the zero address.
      * - `sender` must have a balance of at least `amount`.
      */
-    function _transfer(address sender, address recipient, uint256 amount) internal virtual {
+    function _transfer(
+        address sender,
+        address recipient,
+        uint256 amount
+    ) internal virtual {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
         _beforeTokenTransfer(sender, recipient, amount);
 
-        _balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
+        _balances[sender] = _balances[sender].sub(
+            amount,
+            "ERC20: transfer amount exceeds balance"
+        );
         _balances[recipient] = _balances[recipient].add(amount);
         emit Transfer(sender, recipient, amount);
     }
@@ -591,7 +684,10 @@ contract ERC20 is Context, IERC20 {
 
         _beforeTokenTransfer(account, address(0), amount);
 
-        _balances[account] = _balances[account].sub(amount, "ERC20: burn amount exceeds balance");
+        _balances[account] = _balances[account].sub(
+            amount,
+            "ERC20: burn amount exceeds balance"
+        );
         _totalSupply = _totalSupply.sub(amount);
         emit Transfer(account, address(0), amount);
     }
@@ -609,7 +705,11 @@ contract ERC20 is Context, IERC20 {
      * - `owner` cannot be the zero address.
      * - `spender` cannot be the zero address.
      */
-    function _approve(address owner, address spender, uint256 amount) internal virtual {
+    function _approve(
+        address owner,
+        address spender,
+        uint256 amount
+    ) internal virtual {
         require(owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
 
@@ -642,16 +742,16 @@ contract ERC20 is Context, IERC20 {
      *
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
-    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal virtual {}
 }
-
 
 // File @openzeppelin/contracts/token/ERC20/ERC20Burnable.sol@v3.4.2
 
-
-
 pragma solidity >=0.6.0;
-
 
 /**
  * @dev Extension of {ERC20} that allows token holders to destroy both their own
@@ -682,17 +782,17 @@ abstract contract ERC20Burnable is Context, ERC20 {
      * `amount`.
      */
     function burnFrom(address account, uint256 amount) public virtual {
-        uint256 decreasedAllowance = allowance(account, _msgSender()).sub(amount, "ERC20: burn amount exceeds allowance");
+        uint256 decreasedAllowance = allowance(account, _msgSender()).sub(
+            amount,
+            "ERC20: burn amount exceeds allowance"
+        );
 
         _approve(account, _msgSender(), decreasedAllowance);
         _burn(account, amount);
     }
 }
 
-
 // File @openzeppelin/contracts/math/Math.sol@v3.4.2
-
-
 
 pragma solidity >=0.6.0;
 
@@ -720,14 +820,11 @@ library Math {
      */
     function average(uint256 a, uint256 b) internal pure returns (uint256) {
         // (a + b) / 2 can overflow, so we distribute
-        return (a / 2) + (b / 2) + ((a % 2 + b % 2) / 2);
+        return (a / 2) + (b / 2) + (((a % 2) + (b % 2)) / 2);
     }
 }
 
-
 // File contracts/lib/SafeMath8.sol
-
-
 
 pragma solidity 0.6.12;
 
@@ -786,7 +883,11 @@ library SafeMath8 {
      *
      * - Subtraction cannot overflow.
      */
-    function sub(uint8 a, uint8 b, string memory errorMessage) internal pure returns (uint8) {
+    function sub(
+        uint8 a,
+        uint8 b,
+        string memory errorMessage
+    ) internal pure returns (uint8) {
         require(b <= a, errorMessage);
         uint8 c = a - b;
 
@@ -845,7 +946,11 @@ library SafeMath8 {
      *
      * - The divisor cannot be zero.
      */
-    function div(uint8 a, uint8 b, string memory errorMessage) internal pure returns (uint8) {
+    function div(
+        uint8 a,
+        uint8 b,
+        string memory errorMessage
+    ) internal pure returns (uint8) {
         require(b > 0, errorMessage);
         uint8 c = a / b;
         // assert(a == b * c + a % b); // There is no case in which this doesn't hold
@@ -881,13 +986,15 @@ library SafeMath8 {
      *
      * - The divisor cannot be zero.
      */
-    function mod(uint8 a, uint8 b, string memory errorMessage) internal pure returns (uint8) {
+    function mod(
+        uint8 a,
+        uint8 b,
+        string memory errorMessage
+    ) internal pure returns (uint8) {
         require(b != 0, errorMessage);
         return a % b;
     }
 }
-
-
 
 // File @openzeppelin/contracts/access/Ownable.sol@v3.4.2
 
@@ -908,12 +1015,15 @@ pragma solidity >=0.6.0;
 abstract contract Ownable is Context {
     address private _owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    constructor () internal {
+    constructor() internal {
         address msgSender = _msgSender();
         _owner = msgSender;
         emit OwnershipTransferred(address(0), msgSender);
@@ -951,22 +1061,26 @@ abstract contract Ownable is Context {
      * Can only be called by the current owner.
      */
     function transferOwnership(address newOwner) public virtual onlyOwner {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        require(
+            newOwner != address(0),
+            "Ownable: new owner is the zero address"
+        );
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }
 }
 
-
 // File contracts/owner/Operator.sol
 
 pragma solidity 0.6.12;
 
-
 contract Operator is Context, Ownable {
     address private _operator;
 
-    event OperatorTransferred(address indexed previousOperator, address indexed newOperator);
+    event OperatorTransferred(
+        address indexed previousOperator,
+        address indexed newOperator
+    );
 
     constructor() internal {
         _operator = _msgSender();
@@ -978,7 +1092,10 @@ contract Operator is Context, Ownable {
     }
 
     modifier onlyOperator() {
-        require(_operator == msg.sender, "operator: caller is not the operator");
+        require(
+            _operator == msg.sender,
+            "operator: caller is not the operator"
+        );
         _;
     }
 
@@ -991,12 +1108,14 @@ contract Operator is Context, Ownable {
     }
 
     function _transferOperator(address newOperator_) internal {
-        require(newOperator_ != address(0), "operator: zero address given for new operator");
+        require(
+            newOperator_ != address(0),
+            "operator: zero address given for new operator"
+        );
         emit OperatorTransferred(address(0), newOperator_);
         _operator = newOperator_;
     }
 }
-
 
 // File contracts/interfaces/IOracle.sol
 
@@ -1005,11 +1124,16 @@ pragma solidity 0.6.12;
 interface IOracle {
     function update() external;
 
-    function consult(address _token, uint256 _amountIn) external view returns (uint144 amountOut);
+    function consult(address _token, uint256 _amountIn)
+        external
+        view
+        returns (uint144 amountOut);
 
-    function twap(address _token, uint256 _amountIn) external view returns (uint144 _amountOut);
+    function twap(address _token, uint256 _amountIn)
+        external
+        view
+        returns (uint144 _amountOut);
 }
-
 
 contract Grape is ERC20Burnable, Operator {
     using SafeMath8 for uint8;
@@ -1032,11 +1156,13 @@ contract Grape is ERC20Burnable, Operator {
      */
     constructor() public ERC20("Grape Finance", "GRAPE") {
         // Mints 1 GRAPE to contract creator for initial pool setup
-        _mint(msg.sender, 1 ether);   
+        _mint(msg.sender, 1 ether);
     }
 
     function _getGrapePrice() internal view returns (uint256 _grapePrice) {
-        try IOracle(grapeOracle).consult(address(this), 1e18) returns (uint144 _price) {
+        try IOracle(grapeOracle).consult(address(this), 1e18) returns (
+            uint144 _price
+        ) {
             return uint256(_price);
         } catch {
             revert("Grape: failed to fetch GRAPE price from Oracle");
@@ -1044,7 +1170,10 @@ contract Grape is ERC20Burnable, Operator {
     }
 
     function setGrapeOracle(address _grapeOracle) public onlyOperator {
-        require(_grapeOracle != address(0), "oracle address cannot be 0 address");
+        require(
+            _grapeOracle != address(0),
+            "oracle address cannot be 0 address"
+        );
         grapeOracle = _grapeOracle;
     }
 
@@ -1054,7 +1183,11 @@ contract Grape is ERC20Burnable, Operator {
      * @param amount_ The amount of GRAPE to mint to
      * @return whether the process has been done
      */
-    function mint(address recipient_, uint256 amount_) public onlyOperator returns (bool) {
+    function mint(address recipient_, uint256 amount_)
+        public
+        onlyOperator
+        returns (bool)
+    {
         uint256 balanceBefore = balanceOf(recipient_);
         _mint(recipient_, amount_);
         uint256 balanceAfter = balanceOf(recipient_);
@@ -1066,7 +1199,11 @@ contract Grape is ERC20Burnable, Operator {
         super.burn(amount);
     }
 
-    function burnFrom(address account, uint256 amount) public override onlyOperator {
+    function burnFrom(address account, uint256 amount)
+        public
+        override
+        onlyOperator
+    {
         super.burnFrom(account, amount);
     }
 
@@ -1076,7 +1213,14 @@ contract Grape is ERC20Burnable, Operator {
         uint256 amount
     ) public override returns (bool) {
         _transfer(sender, recipient, amount);
-        _approve(sender, _msgSender(), allowance(sender, _msgSender()).sub(amount, "ERC20: transfer amount exceeds allowance"));
+        _approve(
+            sender,
+            _msgSender(),
+            allowance(sender, _msgSender()).sub(
+                amount,
+                "ERC20: transfer amount exceeds allowance"
+            )
+        );
         return true;
     }
 

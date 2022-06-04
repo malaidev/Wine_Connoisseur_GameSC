@@ -10,7 +10,11 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "./VintageWine.sol";
 
-contract Cellar is ERC20("Staked VintageWine", "sVINTAGEWINE"), Ownable, Pausable {
+contract Cellar is
+    ERC20("Staked VintageWine", "sVINTAGEWINE"),
+    Ownable,
+    Pausable
+{
     using SafeERC20 for VintageWine;
     using SafeMath for uint256;
 
@@ -37,7 +41,11 @@ contract Cellar is ERC20("Staked VintageWine", "sVINTAGEWINE"), Ownable, Pausabl
         return vintageWine.balanceOf(address(this)) - frozenVintageWine;
     }
 
-    function _unstakeOutput(uint256 _share) internal view returns (uint256 output) {
+    function _unstakeOutput(uint256 _share)
+        internal
+        view
+        returns (uint256 output)
+    {
         uint256 totalShares = totalSupply();
         return _share.mul(vintageWineBalance()).div(totalShares);
     }
@@ -62,9 +70,13 @@ contract Cellar is ERC20("Staked VintageWine", "sVINTAGEWINE"), Ownable, Pausabl
         // QUICK_UNSTAKE_CONTRIBUTION_PERCENT of the claimable VINTAGEWINE will remain in the cellar
         // the rest is transfered to the staker
         uint256 unstakeOutput = _unstakeOutput(_share);
-        uint256 output = unstakeOutput.mul(100 - QUICK_UNSTAKE_CONTRIBUTION_PERCENT).div(100);
+        uint256 output = unstakeOutput
+            .mul(100 - QUICK_UNSTAKE_CONTRIBUTION_PERCENT)
+            .div(100);
         // QUICK_UNSTAKE_BURN_PERCENT of the claimable VINTAGEWINE is burned
-        uint256 amountSpoiled = unstakeOutput.mul(QUICK_UNSTAKE_BURN_PERCENT).div(100);
+        uint256 amountSpoiled = unstakeOutput
+            .mul(QUICK_UNSTAKE_BURN_PERCENT)
+            .div(100);
 
         // burn staker's share
         _burn(_msgSender(), _share);
@@ -82,13 +94,17 @@ contract Cellar is ERC20("Staked VintageWine", "sVINTAGEWINE"), Ownable, Pausabl
         _burn(_msgSender(), _share);
 
         // calculate and burn amount of output spoiled
-        uint256 amountSpoiled = output.mul(DELAYED_UNSTAKE_BURN_PERCENT).div(100);
+        uint256 amountSpoiled = output.mul(DELAYED_UNSTAKE_BURN_PERCENT).div(
+            100
+        );
 
         // remove amountSpoiled from output
         output -= amountSpoiled;
 
         unlockAmounts[_msgSender()] += output;
-        unlockTimestamps[_msgSender()] = block.timestamp + DELAYED_UNSTAKE_LOCKUP_PERIOD;
+        unlockTimestamps[_msgSender()] =
+            block.timestamp +
+            DELAYED_UNSTAKE_LOCKUP_PERIOD;
         frozenVintageWine += output;
 
         vintageWine.burn(address(this), amountSpoiled);
@@ -98,8 +114,14 @@ contract Cellar is ERC20("Staked VintageWine", "sVINTAGEWINE"), Ownable, Pausabl
      * @dev argument specified in VINTAGEWINE, not sVINTAGEWINE
      */
     function claimDelayedUnstake(uint256 _amount) external whenNotPaused {
-        require(block.timestamp >= unlockTimestamps[_msgSender()], "VINTAGEWINE not yet unlocked");
-        require(_amount <= unlockAmounts[_msgSender()], "insufficient locked balance");
+        require(
+            block.timestamp >= unlockTimestamps[_msgSender()],
+            "VINTAGEWINE not yet unlocked"
+        );
+        require(
+            _amount <= unlockAmounts[_msgSender()],
+            "insufficient locked balance"
+        );
 
         // deduct from unlocked
         unlockAmounts[_msgSender()] -= _amount;
@@ -117,7 +139,10 @@ contract Cellar is ERC20("Staked VintageWine", "sVINTAGEWINE"), Ownable, Pausabl
     }
 
     function setStakeStartTime(uint256 _startTime) external onlyOwner {
-        require (_startTime >= block.timestamp, "startTime cannot be in the past");
+        require(
+            _startTime >= block.timestamp,
+            "startTime cannot be in the past"
+        );
         require(!stakeStarted(), "staking already started");
         stakeTime = _startTime;
     }

@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 // Supply cap of 15,000,000
 contract _Grape is ERC20Capped(15_000_000 * 1e18), Ownable {
-
     address public upgradeAddress;
     address public wineryAddress;
 
@@ -28,14 +27,23 @@ contract _Grape is ERC20Capped(15_000_000 * 1e18), Ownable {
     }
 
     function burn(address _from, uint256 _amount) external {
-        require(upgradeAddress != address(0) && wineryAddress != address(0), "missing initial requirements");
-        require(_msgSender() == upgradeAddress || _msgSender() == wineryAddress, "msgsender does not have permission");
+        require(
+            upgradeAddress != address(0) && wineryAddress != address(0),
+            "missing initial requirements"
+        );
+        require(
+            _msgSender() == upgradeAddress || _msgSender() == wineryAddress,
+            "msgsender does not have permission"
+        );
         _burn(_from, _amount);
     }
 
     function transferForUpgradesFees(address _from, uint256 _amount) external {
         require(upgradeAddress != address(0), "missing initial requirements");
-        require(_msgSender() == upgradeAddress, "only the upgrade contract can call transferForUpgradesFees");
+        require(
+            _msgSender() == upgradeAddress,
+            "only the upgrade contract can call transferForUpgradesFees"
+        );
         _transfer(_from, upgradeAddress, _amount);
     }
 }
