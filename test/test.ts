@@ -146,6 +146,7 @@ describe('Wine Connoisseur game', function () {
       await wineryProgression.setLevelStartTime(
         Math.floor(Date.now() / 1000) + 20,
       )
+      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) + 20)
     })
   })
   describe('Vintner 721 token', function () {
@@ -408,6 +409,7 @@ describe('Wine Connoisseur game', function () {
       const result2 = await winery.batchedToolsOfOwner(caller.address, 0, 10)
     })
     it('Claim vintageWine', async function () {
+      // VintageWine token will be sent to owner and cellar
       await winery.claimVintageWine()
       await winery.connect(caller).claimVintageWine()
     })
@@ -424,8 +426,43 @@ describe('Wine Connoisseur game', function () {
       // )
     })
     it('Withdraw Vintner', async function () {
-      await winery.withdrawVintners([1, 2, 3])
-      await winery.connect(caller).withdrawVintners([51, 52, 53])
+      await expect(winery.withdrawVintners([1, 2, 3])).to.be.revertedWith(
+        'Vintner is not resting',
+      )
+    })
+  })
+  describe('Cellar', function () {
+    it('Stake VintageWine to Cellar', async function () {
+      cellar.stake(BigNumber.from(200000).mul(BigNumber.from(10).pow(18)))
+    })
+    it('Withdraw VintageWintoken', async function () {
+      /**
+       * There are two method to withdraw - QuickUnStake, DelayedUnstake
+       * Quick Unstake - 50% of token will be burned , 50% will be sent immediately
+       * Delayed Unstake - 10% of token will be burned, can withdrawl after 2 days
+       */
+      // Quick Unstake
+      const share = 200000
+      // Cannot unstake if bigger than staked amount
+      await expect(
+        cellar.quickUnstake(
+          BigNumber.from(share + 1).mul(BigNumber.from(10).pow(18)),
+        ),
+      ).to.be.reverted
+      await cellar.quickUnstake(
+        BigNumber.from(share).mul(BigNumber.from(10).pow(18)),
+      )
+      // Delayed Unstake
+      cellar.stake(BigNumber.from(share).mul(BigNumber.from(10).pow(18)))
+      await cellar.prepareDelayedUnstake(
+        BigNumber.from(share).mul(BigNumber.from(10).pow(18)),
+      )
+      // After 2 days , can be claimed
+      await expect(
+        cellar.claimDelayedUnstake(
+          BigNumber.from(share).mul(BigNumber.from(10).pow(18)),
+        ),
+      ).to.be.revertedWith('VINTAGEWINE not yet unlocked')
     })
   })
 })

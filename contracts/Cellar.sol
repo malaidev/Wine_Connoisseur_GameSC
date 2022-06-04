@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "./VintageWine.sol";
 
 contract Cellar is
-    ERC20("Staked VintageWine", "sVINTAGEWINE"),
+    ERC20("Staked VintageWine", "SVINTAGEWINE"),
     Ownable,
     Pausable
 {
