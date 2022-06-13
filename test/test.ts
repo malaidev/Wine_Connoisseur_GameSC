@@ -131,22 +131,33 @@ describe('Wine Connoisseur game', function () {
     })
   })
   describe('Initialize contracts', function () {
-    it('Initialize Vintage Wine contract', async function () {
+    it('Set initial values', async function () {
       await vintageWine.setCellarAddress(cellar.address)
       await vintageWine.setWineryAddress(winery.address)
       await vintageWine.setVintnerAddress(vintner.address)
       await vintageWine.setUpgradeAddress(upgrade.address)
+      await vintner.setWineryAddress(winery.address)
+      await upgrade.setWineryAddress(winery.address)
       expect(await vintageWine.vintnerAddress()).to.equal(vintner.address)
+      // We need to do this in real production !!!
+      // await winery.initialize(
+      //   vintner.address,
+      //   upgrade.address,
+      //   vintageWine.address,
+      //   grape.address,
+      //   cellar.address,
+      //   wineryProgression.address,
+      // )
     })
     it('Set Start time', async function () {
       await vintner.setStartTimeAVAX(Math.floor(Date.now() / 1000) + 20)
       await vintner.setStartTimeVINTAGEWINE(Math.floor(Date.now() / 1000) + 20)
-      await winery.setStartTime(Math.floor(Date.now() / 1000) + 20)
-      await upgrade.setStartTime(Math.floor(Date.now() / 1000) + 20)
+      await winery.setStartTime(Math.floor(Date.now() / 1000) + 25)
+      await upgrade.setStartTime(Math.floor(Date.now() / 1000) + 25)
       await wineryProgression.setLevelStartTime(
-        Math.floor(Date.now() / 1000) + 20,
+        Math.floor(Date.now() / 1000) + 25,
       )
-      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) + 20)
+      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) + 25)
     })
   })
   describe('Vintner 721 token', function () {
@@ -185,8 +196,8 @@ describe('Wine Connoisseur game', function () {
        * _offset
        * _maxSize
        */
-      const result1 = await upgrade.batchedUpgradesOfOwner(owner.address, 0, 10)
-      const result2 = await upgrade.batchedUpgradesOfOwner(caller.address, 3, 3)
+      const result1 = await vintner.batchedVintnersOfOwner(owner.address, 0, 10)
+      const result2 = await vintner.batchedVintnersOfOwner(caller.address, 3, 3)
     })
   })
   describe('Tools 721 token', function () {
@@ -245,7 +256,7 @@ describe('Wine Connoisseur game', function () {
       ) // level 0 - 2, level 1 - 2, level 2 - 2
       await vintageWine.approve(
         upgrade.address,
-        BigNumber.from((3000 + 10000 + 20000) * mintAmount).mul(
+        BigNumber.from((3000 + 10000 + 25000) * mintAmount).mul(
           BigNumber.from(10).pow(18),
         ),
       )
@@ -261,7 +272,7 @@ describe('Wine Connoisseur game', function () {
         .connect(caller)
         .approve(
           upgrade.address,
-          BigNumber.from((3000 + 10000 + 20000) * mintAmount).mul(
+          BigNumber.from((3000 + 10000 + 25000) * mintAmount).mul(
             BigNumber.from(10).pow(18),
           ),
         )
@@ -291,17 +302,6 @@ describe('Wine Connoisseur game', function () {
     })
   })
   describe('Winery', function () {
-    it('Initialize contract', async function () {
-      // We need to do this in real production
-      // await winery.initialize(
-      //   vintner.address,
-      //   upgrade.address,
-      //   vintageWine.address,
-      //   grape.address,
-      //   cellar.address,
-      //   wineryProgression.address,
-      // )
-    })
     it('Stake Vinter ERC721 to Winery', async function () {
       // 1 ~ 50 is promotion for owner
       expect(await vintner.ownerOf(1)).to.equal(owner.address)
@@ -331,10 +331,10 @@ describe('Wine Connoisseur game', function () {
       await vintner.connect(oracle).setVintnerType(54, 1)
       await vintner.connect(oracle).setVintnerType(55, 2)
       // Should approve Vinery token to Winery address
-      await vintner.connect(caller).approve(winery.address, 51)
-      await expect(winery.connect(caller).stakeMany([51, 52, 53, 54, 55], []))
-        .to.be.reverted
-      await vintner.connect(caller).setApprovalForAll(winery.address, true)
+      // await vintner.connect(caller).approve(winery.address, 51)
+      // await expect(winery.connect(caller).stakeMany([51, 52, 53, 54, 55], []))
+      //   .to.be.reverted
+      // await vintner.connect(caller).setApprovalForAll(winery.address, true)
       await winery.connect(caller).stakeMany([51, 52, 53, 54, 55], [])
     })
     it('Stake Tools ERC721 to Winery for owner', async function () {

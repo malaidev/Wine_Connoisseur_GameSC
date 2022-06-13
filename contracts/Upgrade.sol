@@ -54,7 +54,7 @@ contract Upgrade is ERC721Enumerable, Ownable, Pausable {
     struct UpgradeInfo {
         uint256 tokenId;
         uint256 level;
-        uint256 yield;
+        uint256 _yield;
     }
     // Struct
 
@@ -323,7 +323,7 @@ contract Upgrade is ERC721Enumerable, Ownable, Pausable {
             upgrades[i] = UpgradeInfo({
                 tokenId: tokenId,
                 level: tokenLevel[tokenId],
-                yield: levels[tokenLevel[tokenId]].yield
+                _yield: levels[tokenLevel[tokenId]].yield
             });
         }
         return upgrades;

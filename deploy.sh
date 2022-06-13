@@ -7,7 +7,7 @@
 # npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress)
 
 # npx hardhat run --network avaxfuji scripts/deployUpgrade.ts
-# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, grapeTokenAddress, BASE_URI)
+# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, grapeTokenAddress, BASE_URI_UPGRADE)
 
 # npx hardhat run --network avaxfuji scripts/deployVintner.ts
 # npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, oracleAddress, BASE_URI)
@@ -16,10 +16,15 @@
 # npx hardhat verify --network avaxfuji (--constructor_args: grapeTokenAddress)
 
 # npx hardhat run --network avaxfuji scripts/deployWinery.ts
+# Go to scan and get proxy contract address
 # npx hardhat verify --network avaxfuji (--address: proxy address)
 
 # Update winery contract
 # npx hardhat run --network avaxfuji scripts/updateWinery.ts
+
+# Deply Grape for only test
+# npx hardhat run --network avaxfuji scripts/deployGrape.ts
+# npx hardhat verify --network avaxfuji
 
 
 echo "DEPLOY"

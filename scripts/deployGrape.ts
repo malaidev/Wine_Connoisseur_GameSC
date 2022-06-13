@@ -1,5 +1,4 @@
 import { ethers } from 'hardhat'
-import { grapeTokenAddress, vintageWineAddress, BASE_URI_UPGRADE } from './address'
 
 async function main(): Promise<string> {
   const [deployer] = await ethers.getSigners()
@@ -7,14 +6,10 @@ async function main(): Promise<string> {
 
   console.log('Account balance:', (await deployer.getBalance()).toString())
 
-  const Upgrade = await ethers.getContractFactory('Upgrade')
-  const Upgrade_Deployed = await Upgrade.deploy(
-    vintageWineAddress,
-    grapeTokenAddress,
-    BASE_URI_UPGRADE,
-  )
+  const Grape = await ethers.getContractFactory('Grape')
+  const Grape_Deployed = await Grape.deploy()
 
-  return Upgrade_Deployed.address
+  return Grape_Deployed.address
 }
 
 main()
