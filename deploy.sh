@@ -3,14 +3,14 @@
 # npx hardhat run --network avaxfuji scripts/deployVintageWine.ts
 # npx hardhat verify --network avaxfuji
 
-# npx hardhat run --network avaxfuji scripts/deployCellar.ts
-# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress)
+# npx hardhat run --network avaxfuji scripts/deployVintner.ts
+# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, oracleAddress, BASE_URI)
 
 # npx hardhat run --network avaxfuji scripts/deployUpgrade.ts
 # npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, grapeTokenAddress, BASE_URI_UPGRADE)
 
-# npx hardhat run --network avaxfuji scripts/deployVintner.ts
-# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, oracleAddress, BASE_URI)
+# npx hardhat run --network avaxfuji scripts/deployCellar.ts
+# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress)
 
 # npx hardhat run --network avaxfuji scripts/deployWineryProgression.ts
 # npx hardhat verify --network avaxfuji (--constructor_args: grapeTokenAddress)
