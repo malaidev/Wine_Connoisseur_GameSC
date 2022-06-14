@@ -3,7 +3,8 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
@@ -47,7 +48,7 @@ interface IGrape {
     );
 }
 
-contract Upgrade is ERC721Enumerable, Ownable, Pausable {
+contract Upgrade is ERC721, Ownable, Pausable {
     using SafeERC20 for IERC20;
     using Strings for uint256;
 
@@ -301,31 +302,31 @@ contract Upgrade is ERC721Enumerable, Ownable, Pausable {
         );
     }
 
-    // Returns information for multiples upgrades
-    function batchedUpgradesOfOwner(
-        address _owner,
-        uint256 _offset,
-        uint256 _maxSize
-    ) public view returns (UpgradeInfo[] memory) {
-        if (_offset >= balanceOf(_owner)) {
-            return new UpgradeInfo[](0);
-        }
+    // // Returns information for multiples upgrades
+    // function batchedUpgradesOfOwner(
+    //     address _owner,
+    //     uint256 _offset,
+    //     uint256 _maxSize
+    // ) public view returns (UpgradeInfo[] memory) {
+    //     if (_offset >= balanceOf(_owner)) {
+    //         return new UpgradeInfo[](0);
+    //     }
 
-        uint256 outputSize = _maxSize;
-        if (_offset + _maxSize >= balanceOf(_owner)) {
-            outputSize = balanceOf(_owner) - _offset;
-        }
-        UpgradeInfo[] memory upgrades = new UpgradeInfo[](outputSize);
+    //     uint256 outputSize = _maxSize;
+    //     if (_offset + _maxSize >= balanceOf(_owner)) {
+    //         outputSize = balanceOf(_owner) - _offset;
+    //     }
+    //     UpgradeInfo[] memory upgrades = new UpgradeInfo[](outputSize);
 
-        for (uint256 i = 0; i < outputSize; i++) {
-            uint256 tokenId = tokenOfOwnerByIndex(_owner, _offset + i); // tokenOfOwnerByIndex comes from IERC721Enumerable
+    //     for (uint256 i = 0; i < outputSize; i++) {
+    //         uint256 tokenId = tokenOfOwnerByIndex(_owner, _offset + i); // tokenOfOwnerByIndex comes from IERC721Enumerable
 
-            upgrades[i] = UpgradeInfo({
-                tokenId: tokenId,
-                level: tokenLevel[tokenId],
-                _yield: levels[tokenLevel[tokenId]].yield
-            });
-        }
-        return upgrades;
-    }
+    //         upgrades[i] = UpgradeInfo({
+    //             tokenId: tokenId,
+    //             level: tokenLevel[tokenId],
+    //             _yield: levels[tokenLevel[tokenId]].yield
+    //         });
+    //     }
+    //     return upgrades;
+    // }
 }

@@ -131,6 +131,16 @@ describe('Wine Connoisseur game', function () {
     })
   })
   describe('Initialize contracts', function () {
+    it('Set Start time', async function () {
+      await vintner.setStartTimeAVAX(Math.floor(Date.now() / 1000) + 20)
+      await vintner.setStartTimeVINTAGEWINE(Math.floor(Date.now() / 1000) + 20)
+      await winery.setStartTime(Math.floor(Date.now() / 1000) + 25)
+      await upgrade.setStartTime(Math.floor(Date.now() / 1000) + 25)
+      await wineryProgression.setLevelStartTime(
+        Math.floor(Date.now() / 1000) + 25,
+      )
+      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) + 25)
+    })
     it('Set initial values', async function () {
       await vintageWine.setCellarAddress(cellar.address)
       await vintageWine.setWineryAddress(winery.address)
@@ -148,16 +158,6 @@ describe('Wine Connoisseur game', function () {
       //   cellar.address,
       //   wineryProgression.address,
       // )
-    })
-    it('Set Start time', async function () {
-      await vintner.setStartTimeAVAX(Math.floor(Date.now() / 1000) + 20)
-      await vintner.setStartTimeVINTAGEWINE(Math.floor(Date.now() / 1000) + 20)
-      await winery.setStartTime(Math.floor(Date.now() / 1000) + 25)
-      await upgrade.setStartTime(Math.floor(Date.now() / 1000) + 25)
-      await wineryProgression.setLevelStartTime(
-        Math.floor(Date.now() / 1000) + 25,
-      )
-      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) + 25)
     })
   })
   describe('Vintner 721 token', function () {
@@ -189,16 +189,16 @@ describe('Wine Connoisseur game', function () {
       await vintner.connect(caller).mintVintnerWithVINTAGEWINE(3) // each token for 20,000 vintageWine
       expect(await vintner.vintnersMintedWithVINTAGEWINE()).to.equal(3)
     })
-    it('Get Info for Owner', async function () {
-      /**
-       * @param
-       * _owner
-       * _offset
-       * _maxSize
-       */
-      const result1 = await vintner.batchedVintnersOfOwner(owner.address, 0, 10)
-      const result2 = await vintner.batchedVintnersOfOwner(caller.address, 3, 3)
-    })
+    // it('Get Info for Owner', async function () {
+    //   /**
+    //    * @param
+    //    * _owner
+    //    * _offset
+    //    * _maxSize
+    //    */
+    //   const result1 = await vintner.batchedVintnersOfOwner(owner.address, 0, 10)
+    //   const result2 = await vintner.batchedVintnersOfOwner(caller.address, 3, 3)
+    // })
   })
   describe('Tools 721 token', function () {
     it('Add level', async function () {
@@ -290,16 +290,16 @@ describe('Wine Connoisseur game', function () {
       await upgrade.connect(caller).mintUpgrade(1, mintAmount)
       await upgrade.connect(caller).mintUpgrade(2, mintAmount)
     })
-    it('Get Info for Owner', async function () {
-      /**
-       * @param
-       * _owner
-       * _offset
-       * _maxSize
-       */
-      const result1 = await upgrade.batchedUpgradesOfOwner(owner.address, 0, 10)
-      const result2 = await upgrade.batchedUpgradesOfOwner(caller.address, 3, 3)
-    })
+    // it('Get Info for Owner', async function () {
+    //   /**
+    //    * @param
+    //    * _owner
+    //    * _offset
+    //    * _maxSize
+    //    */
+    //   const result1 = await upgrade.batchedUpgradesOfOwner(owner.address, 0, 10)
+    //   const result2 = await upgrade.batchedUpgradesOfOwner(caller.address, 3, 3)
+    // })
   })
   describe('Winery', function () {
     it('Stake Vinter ERC721 to Winery', async function () {

@@ -3,14 +3,15 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 // import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 import "./VintageWine.sol";
 
-contract Vintner is ERC721Enumerable, Ownable, Pausable {
+contract Vintner is ERC721, Ownable, Pausable {
     using SafeERC20 for IERC20;
     using Strings for uint256;
 
@@ -425,30 +426,30 @@ contract Vintner is ERC721Enumerable, Ownable, Pausable {
     }
 
     // Returns information for multiples vintners
-    function batchedVintnersOfOwner(
-        address _owner,
-        uint256 _offset,
-        uint256 _maxSize
-    ) public view returns (VintnerInfo[] memory) {
-        if (_offset >= balanceOf(_owner)) {
-            return new VintnerInfo[](0);
-        }
+    // function batchedVintnersOfOwner(
+    //     address _owner,
+    //     uint256 _offset,
+    //     uint256 _maxSize
+    // ) public view returns (VintnerInfo[] memory) {
+    //     if (_offset >= balanceOf(_owner)) {
+    //         return new VintnerInfo[](0);
+    //     }
 
-        uint256 outputSize = _maxSize;
-        if (_offset + _maxSize >= balanceOf(_owner)) {
-            outputSize = balanceOf(_owner) - _offset;
-        }
-        VintnerInfo[] memory vintners = new VintnerInfo[](outputSize);
+    //     uint256 outputSize = _maxSize;
+    //     if (_offset + _maxSize >= balanceOf(_owner)) {
+    //         outputSize = balanceOf(_owner) - _offset;
+    //     }
+    //     VintnerInfo[] memory vintners = new VintnerInfo[](outputSize);
 
-        for (uint256 i = 0; i < outputSize; i++) {
-            uint256 tokenId = tokenOfOwnerByIndex(_owner, _offset + i); // tokenOfOwnerByIndex comes from IERC721Enumerable
+    //     for (uint256 i = 0; i < outputSize; i++) {
+    //         uint256 tokenId = tokenOfOwnerByIndex(_owner, _offset + i); // tokenOfOwnerByIndex comes from IERC721Enumerable
 
-            vintners[i] = VintnerInfo({
-                tokenId: tokenId,
-                vintnerType: tokenTypes[tokenId]
-            });
-        }
+    //         vintners[i] = VintnerInfo({
+    //             tokenId: tokenId,
+    //             vintnerType: tokenTypes[tokenId]
+    //         });
+    //     }
 
-        return vintners;
-    }
+    //     return vintners;
+    // }
 }
