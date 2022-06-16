@@ -1,8 +1,9 @@
 import { expect } from 'chai'
 import { deployments, ethers, upgrades } from 'hardhat'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
-import { BASE_URI } from '../scripts/address'
+import { couponPublic, couponPrivate, BASE_URI } from '../scripts/address'
 import { BigNumber } from 'ethers'
+import { keccak256, toBuffer, ecsign, bufferToHex } from 'ethereumjs-util'
 import {
   Cellar,
   Grape,
@@ -71,7 +72,7 @@ describe('Wine Connoisseur game', function () {
     // Deploy Vintner Contract
     receipt = await deployments.deploy('Vintner', {
       from: owner.address,
-      args: [vintageWine.address, oracle.address, BASE_URI],
+      args: [couponPublic, oracle.address, BASE_URI],
       log: true,
     })
     vintner = await ethers.getContractAt('Vintner', receipt.address)
@@ -133,7 +134,7 @@ describe('Wine Connoisseur game', function () {
   describe('Initialize contracts', function () {
     it('Set Start time', async function () {
       await vintner.setStartTimeAVAX(Math.floor(Date.now() / 1000) + 20)
-      await vintner.setStartTimeVINTAGEWINE(Math.floor(Date.now() / 1000) + 20)
+      await vintner.setStartTimeWhitelist(Math.floor(Date.now() / 1000) + 20)
       await winery.setStartTime(Math.floor(Date.now() / 1000) + 25)
       await upgrade.setStartTime(Math.floor(Date.now() / 1000) + 25)
       await wineryProgression.setLevelStartTime(
@@ -144,11 +145,9 @@ describe('Wine Connoisseur game', function () {
     it('Set initial values', async function () {
       await vintageWine.setCellarAddress(cellar.address)
       await vintageWine.setWineryAddress(winery.address)
-      await vintageWine.setVintnerAddress(vintner.address)
       await vintageWine.setUpgradeAddress(upgrade.address)
       await vintner.setWineryAddress(winery.address)
       await upgrade.setWineryAddress(winery.address)
-      expect(await vintageWine.vintnerAddress()).to.equal(vintner.address)
       // We need to do this in real production !!!
       // await winery.initialize(
       //   vintner.address,
@@ -172,7 +171,6 @@ describe('Wine Connoisseur game', function () {
       expect(callerBalance).to.equal(
         BigNumber.from(200000).mul(BigNumber.from(10).pow(18)),
       )
-      expect(await vintner.vintageWine()).to.equal(vintageWine.address)
 
       // Mint vinter promotional - 1 ~ 50 would promote for owner ( only owner )
       await vintner.mintPromotional(3, 1, owner.address) // Mint normal vintner  - token amount, vintner type, target address
@@ -180,14 +178,45 @@ describe('Wine Connoisseur game', function () {
       expect(await vintner.vintnersMintedPromotional()).to.equal(5)
 
       // Mint vinter using Avax
-      await vintner.connect(caller).mintVintnerWithAVAX(2, {
-        value: ethers.utils.parseEther('3'),
+      await vintner.connect(caller).mintVintnerWithAVAX(5, {
+        value: ethers.utils.parseEther('15'),
       }) // 1.5 avax
-      expect(await vintner.vintnersMintedWithAVAX()).to.equal(2)
+      expect(await vintner.vintnersMintedWithAVAX()).to.equal(5)
+    })
+    it('Mint Vintner for Whitelist', async function () {
+      // Create Coupon for sign
+      function serializeCoupon(coupon: any) {
+        return {
+          r: bufferToHex(coupon.r),
+          s: bufferToHex(coupon.s),
+          v: coupon.v,
+        }
+      }
+      /**
+       * * signerPvtKeyString
+       * Private key generated from ethers.Wallet.createRandom() - stored as a non-public environment variable
+       * @notice The address used in your Smart Contract to verify the coupon must be the public address associated with this key
+       */
 
-      // Mint vinter using vintageWine
-      await vintner.connect(caller).mintVintnerWithVINTAGEWINE(3) // each token for 20,000 vintageWine
-      expect(await vintner.vintnersMintedWithVINTAGEWINE()).to.equal(3)
+      const signerPvtKey = Buffer.from(couponPrivate, 'hex')
+
+      console.log('signerPvtKey', signerPvtKey)
+
+      const hashBuffer = keccak256(
+        toBuffer(
+          ethers.utils.defaultAbiCoder.encode(
+            ['uint256', 'address'],
+            [5, caller.address],
+          ),
+        ),
+      )
+
+      const coupon = ecsign(hashBuffer, signerPvtKey)
+      const serialize = serializeCoupon(coupon)
+
+      // Mint vinter for whitelist
+      await vintner.connect(caller).mintWhitelist(2, 5, serialize) // quality , allottedMint , couponRSV ( for sign )
+      expect(await vintner.whitelistClaimed(caller.address)).to.equal(2)
     })
     // it('Get Info for Owner', async function () {
     //   /**

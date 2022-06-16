@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { vintageWineAddress, oracleAddress, BASE_URI } from './address'
+import { oracleAddress, BASE_URI, couponPublic } from './address'
 
 async function main(): Promise<string> {
   const [deployer] = await ethers.getSigners()
@@ -8,11 +8,7 @@ async function main(): Promise<string> {
   console.log('Account balance:', (await deployer.getBalance()).toString())
 
   const Vintner = await ethers.getContractFactory('Vintner')
-  const Vintner_Deployed = await Vintner.deploy(
-    vintageWineAddress,
-    oracleAddress,
-    BASE_URI,
-  )
+  const Vintner_Deployed = await Vintner.deploy(couponPublic, oracleAddress, BASE_URI)
 
   return Vintner_Deployed.address
 }

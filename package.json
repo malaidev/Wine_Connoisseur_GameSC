@@ -24,6 +24,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-promise": "^5.1.0",
     "ethereum-waffle": "^3.0.0",
+    "ethereumjs-util": "^7.1.5",
     "ethers": "^5.0.0",
     "hardhat": "^2.9.6",
     "hardhat-gas-reporter": "^1.0.4",

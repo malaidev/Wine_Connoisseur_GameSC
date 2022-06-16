@@ -7,9 +7,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 // import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+
 // import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-import "./VintageWine.sol";
+// import "./VintageWine.sol";
 
 contract Vintner is ERC721, Ownable, Pausable {
     using SafeERC20 for IERC20;
@@ -22,16 +23,16 @@ contract Vintner is ERC721, Ownable, Pausable {
 
     // CONSTANTS
 
-    // uint256 public constant VINTNER_PRICE_WHITELIST = 1 ether;
-    uint256 public constant VINTNER_PRICE_AVAX = 1.5 ether;
+    // uint256 public constant VINTNER_PRICE_WHITELIST = 0 ether;
+    uint256 public constant VINTNER_PRICE_AVAX = 3 ether;
 
-    // uint256 public constant WHITELIST_VINTNERS = 1000;
-    uint256 public constant VINTNERS_PER_VINTAGEWINE_MINT_LEVEL = 5000;
+    uint256 public WHITELIST_VINTNERS = 2700;
+    // uint256 public constant VINTNERS_PER_VINTAGEWINE_MINT_LEVEL = 5000;
 
     // uint256 public constant MAXIMUM_MINTS_PER_WHITELIST_ADDRESS = 4;
 
-    uint256 public constant NUM_GEN0_VINTNERS = 10_000;
-    uint256 public constant NUM_GEN1_VINTNERS = 10_000;
+    uint256 public constant NUM_VINTNERS = 10_000;
+    // uint256 public constant NUM_GEN1_VINTNERS = 10_000;
 
     uint256 public constant VINTNER_TYPE = 1;
     uint256 public constant MASTER_VINTNER_TYPE = 2;
@@ -44,7 +45,7 @@ contract Vintner is ERC721, Ownable, Pausable {
     // VAR
 
     // external contracts
-    VintageWine public vintageWine;
+    // VintageWine public vintageWine;
     address public wineryAddress;
     address public vintnerTypeOracleAddress;
 
@@ -57,22 +58,28 @@ contract Vintner is ERC721, Ownable, Pausable {
 
     // mint tracking
     uint256 public vintnersMintedWithAVAX;
-    uint256 public vintnersMintedWithVINTAGEWINE;
-    // uint256 public vintnersMintedWhitelist;
+    // uint256 public vintnersMintedWithVINTAGEWINE;
+    uint256 public vintnersMintedWhitelist;
     uint256 public vintnersMintedPromotional;
     uint256 public vintnersMinted = 50; // First 50 ids are reserved for the promotional vintners
 
     // mint control timestamps
-    // uint256 public startTimeWhitelist;
+    uint256 public startTimeWhitelist;
     uint256 public startTimeAVAX;
-    uint256 public startTimeVINTAGEWINE;
+    // uint256 public startTimeVINTAGEWINE;
 
     // VINTAGEWINE mint price tracking
-    uint256 public currentVINTAGEWINEMintCost = 20_000 * 1e18;
+    // uint256 public currentVINTAGEWINEMintCost = 20_000 * 1e18;
 
     // whitelist
     // bytes32 public merkleRoot;
-    // mapping(address => uint256) public whitelistClaimed;
+    address public couponSigner;
+    struct Coupon {
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+    }
+    mapping(address => uint256) public whitelistClaimed;
 
     // EVENTS
 
@@ -85,15 +92,17 @@ contract Vintner is ERC721, Ownable, Pausable {
      * vintnerTypeOracleAddress: external vintner generator uses secure RNG
      */
     constructor(
-        VintageWine _vintageWine,
+        // VintageWine _vintageWine,
+        address _couponSigner,
         address _vintnerTypeOracleAddress,
         string memory _BASE_URI
     ) ERC721("VintageWine Game Vintners", "VINTAGEWINE-GAME-VINTNER") {
-        require(address(_vintageWine) != address(0));
+        // require(address(_vintageWine) != address(0));
+        couponSigner = _couponSigner;
         require(_vintnerTypeOracleAddress != address(0));
 
         // set required contract references
-        vintageWine = _vintageWine;
+        // vintageWine = _vintageWine;
         vintnerTypeOracleAddress = _vintnerTypeOracleAddress;
 
         // set base uri
@@ -108,19 +117,19 @@ contract Vintner is ERC721, Ownable, Pausable {
 
     // minting status
 
-    // function mintingStartedWhitelist() public view returns (bool) {
-    //     return startTimeWhitelist != 0 && block.timestamp >= startTimeWhitelist;
-    // }
+    function mintingStartedWhitelist() public view returns (bool) {
+        return startTimeWhitelist != 0 && block.timestamp >= startTimeWhitelist;
+    }
 
     function mintingStartedAVAX() public view returns (bool) {
         return startTimeAVAX != 0 && block.timestamp >= startTimeAVAX;
     }
 
-    function mintingStartedVINTAGEWINE() public view returns (bool) {
-        return
-            startTimeVINTAGEWINE != 0 &&
-            block.timestamp >= startTimeVINTAGEWINE;
-    }
+    // function mintingStartedVINTAGEWINE() public view returns (bool) {
+    //     return
+    //         startTimeVINTAGEWINE != 0 &&
+    //         block.timestamp >= startTimeVINTAGEWINE;
+    // }
 
     // metadata
 
@@ -175,9 +184,9 @@ contract Vintner is ERC721, Ownable, Pausable {
         wineryAddress = _wineryAddress;
     }
 
-    function setVintageWine(address _vintageWine) external onlyOwner {
-        vintageWine = VintageWine(_vintageWine);
-    }
+    // function setVintageWine(address _vintageWine) external onlyOwner {
+    //     vintageWine = VintageWine(_vintageWine);
+    // }
 
     function setvintnerTypeOracleAddress(address _vintnerTypeOracleAddress)
         external
@@ -186,13 +195,13 @@ contract Vintner is ERC721, Ownable, Pausable {
         vintnerTypeOracleAddress = _vintnerTypeOracleAddress;
     }
 
-    // function setStartTimeWhitelist(uint256 _startTime) external onlyOwner {
-    //     require(
-    //         _startTime >= block.timestamp,
-    //         "startTime cannot be in the past"
-    //     );
-    //     startTimeWhitelist = _startTime;
-    // }
+    function setStartTimeWhitelist(uint256 _startTime) external onlyOwner {
+        require(
+            _startTime >= block.timestamp,
+            "startTime cannot be in the past"
+        );
+        startTimeWhitelist = _startTime;
+    }
 
     function setStartTimeAVAX(uint256 _startTime) external onlyOwner {
         require(
@@ -202,13 +211,13 @@ contract Vintner is ERC721, Ownable, Pausable {
         startTimeAVAX = _startTime;
     }
 
-    function setStartTimeVINTAGEWINE(uint256 _startTime) external onlyOwner {
-        require(
-            _startTime >= block.timestamp,
-            "startTime cannot be in the past"
-        );
-        startTimeVINTAGEWINE = _startTime;
-    }
+    // function setStartTimeVINTAGEWINE(uint256 _startTime) external onlyOwner {
+    //     require(
+    //         _startTime >= block.timestamp,
+    //         "startTime cannot be in the past"
+    //     );
+    //     startTimeVINTAGEWINE = _startTime;
+    // }
 
     function setBaseURI(string calldata _BASE_URI) external onlyOwner {
         BASE_URI = _BASE_URI;
@@ -246,7 +255,8 @@ contract Vintner is ERC721, Ownable, Pausable {
 
     function _createVintner(address to, uint256 tokenId) internal {
         require(
-            vintnersMinted <= NUM_GEN0_VINTNERS + NUM_GEN1_VINTNERS,
+            vintnersMinted <= NUM_VINTNERS,
+            // vintnersMinted <= NUM_VINTNERS + NUM_GEN1_VINTNERS,
             "cannot mint anymore vintners"
         );
         _safeMint(to, tokenId);
@@ -321,60 +331,92 @@ contract Vintner is ERC721, Ownable, Pausable {
      * @dev Whitelist GEN0 minting
      * We implement a hard limit on the whitelist vintners.
      */
-    // function mintWhitelist(bytes32[] calldata _merkleProof, uint256 qty)
-    //     external
-    //     payable
-    //     whenNotPaused
-    // {
-    //     // check most basic requirements
-    //     require(merkleRoot != 0, "missing root");
-    //     require(mintingStartedWhitelist(), "cannot mint right now");
-    //     require(!mintingStartedAVAX(), "whitelist minting is closed");
 
-    //     // check if address belongs in whitelist
-    //     bytes32 leaf = keccak256(abi.encodePacked(_msgSender()));
-    //     require(
-    //         MerkleProof.verify(_merkleProof, merkleRoot, leaf),
-    //         "this address does not have permission"
-    //     );
+    function setWhitelistMintCount(uint256 qty) external onlyOwner {
+        require(qty > 0, "quantity must be greater than 0");
+        WHITELIST_VINTNERS = qty;
+    }
 
-    //     // check more advanced requirements
-    //     require(
-    //         qty > 0 && qty <= MAXIMUM_MINTS_PER_WHITELIST_ADDRESS,
-    //         "quantity must be between 1 and 4"
-    //     );
-    //     require(
-    //         (vintnersMintedWhitelist + qty) <= WHITELIST_VINTNERS,
-    //         "you can't mint that many right now"
-    //     );
-    //     require(
-    //         (whitelistClaimed[_msgSender()] + qty) <=
-    //             MAXIMUM_MINTS_PER_WHITELIST_ADDRESS,
-    //         "this address can't mint any more whitelist vintners"
-    //     );
+    /**
+     * * Set Coupon Signer
+     * @dev Set the coupon signing wallet
+     * @param couponSigner_ The new coupon signing wallet address
+     */
+    function setCouponSigner(address couponSigner_) external onlyOwner {
+        couponSigner = couponSigner_;
+    }
 
-    //     // check price
-    //     require(msg.value >= VINTNER_PRICE_WHITELIST * qty, "not enough AVAX");
+    function _isVerifiedCoupon(bytes32 digest, Coupon memory coupon)
+        internal
+        view
+        returns (bool)
+    {
+        address signer = ecrecover(digest, coupon.v, coupon.r, coupon.s);
+        require(signer != address(0), "Zero Address");
+        return signer == couponSigner;
+    }
 
-    //     vintnersMintedWhitelist += qty;
-    //     whitelistClaimed[_msgSender()] += qty;
+    function mintWhitelist(
+        uint256 qty,
+        uint256 allotted,
+        Coupon memory coupon
+    )
+        external
+        // payable
+        whenNotPaused
+    {
+        // check most basic requirements
+        require(mintingStartedWhitelist(), "cannot mint right now");
+        require(
+            qty + whitelistClaimed[_msgSender()] < allotted + 1,
+            "Exceeds Max Allotted"
+        );
 
-    //     // mint vintners
-    //     _createVintners(qty, _msgSender());
-    // }
+        // Create digest to verify against signed coupon
+        bytes32 digest = keccak256(abi.encode(allotted, _msgSender()));
+
+        // Verify digest against signed coupon
+        require(_isVerifiedCoupon(digest, coupon), "Invalid Coupon");
+
+        // check more advanced requirements
+        // require(
+        //     qty > 0 && qty <= MAXIMUM_MINTS_PER_WHITELIST_ADDRESS,
+        //     "quantity must be between 1 and 4"
+        // );
+        // require(
+        //     (vintnersMintedWhitelist + qty) <= WHITELIST_VINTNERS,
+        //     "you can't mint that many right now"
+        // );
+        // require(
+        //     (whitelistClaimed[_msgSender()] + qty) <=
+        //         MAXIMUM_MINTS_PER_WHITELIST_ADDRESS,
+        //     "this address can't mint any more whitelist vintners"
+        // );
+
+        // check price
+        // require(msg.value >= VINTNER_PRICE_WHITELIST * qty, "not enough AVAX");
+
+        vintnersMintedWhitelist += qty;
+        whitelistClaimed[_msgSender()] += qty;
+
+        // mint vintners
+        _createVintners(qty, _msgSender());
+    }
 
     /**
      * @dev GEN0 minting
      */
     function mintVintnerWithAVAX(uint256 qty) external payable whenNotPaused {
         require(mintingStartedAVAX(), "cannot mint right now");
-        require(qty > 0 && qty <= 10, "quantity must be between 1 and 10");
+        uint256 userBalance = balanceOf(_msgSender());
         require(
-            (vintnersMintedWithAVAX + qty) <=
-                (NUM_GEN0_VINTNERS -
-                    // vintnersMintedWhitelist -
-                    PROMOTIONAL_VINTNERS),
-            "you can't mint that many right now"
+            userBalance + qty > 0 && userBalance + qty <= 20,
+            "Exceeds number of mints allowed"
+        );
+        require(
+            (vintnersMintedWithAVAX + userBalance + qty) <=
+                (NUM_VINTNERS - vintnersMintedWhitelist - PROMOTIONAL_VINTNERS),
+            "Exceeds number of total mints allowed"
         );
 
         // calculate the transaction cost
@@ -390,40 +432,40 @@ contract Vintner is ERC721, Ownable, Pausable {
     /**
      * @dev GEN1 minting
      */
-    function mintVintnerWithVINTAGEWINE(uint256 qty) external whenNotPaused {
-        require(mintingStartedVINTAGEWINE(), "cannot mint right now");
-        require(qty > 0 && qty <= 10, "quantity must be between 1 and 10");
-        require(
-            (vintnersMintedWithVINTAGEWINE + qty) <= NUM_GEN1_VINTNERS,
-            "you can't mint that many right now"
-        );
+    // function mintVintnerWithVINTAGEWINE(uint256 qty) external whenNotPaused {
+    //     require(mintingStartedVINTAGEWINE(), "cannot mint right now");
+    //     require(qty > 0 && qty <= 10, "quantity must be between 1 and 10");
+    //     require(
+    //         (vintnersMintedWithVINTAGEWINE + qty) <= NUM_GEN1_VINTNERS,
+    //         "you can't mint that many right now"
+    //     );
 
-        // calculate transaction costs
-        uint256 transactionCostVINTAGEWINE = currentVINTAGEWINEMintCost * qty;
-        require(
-            vintageWine.balanceOf(_msgSender()) >= transactionCostVINTAGEWINE,
-            "not enough VINTAGEWINE"
-        );
+    //     // calculate transaction costs
+    //     uint256 transactionCostVINTAGEWINE = currentVINTAGEWINEMintCost * qty;
+    //     require(
+    //         vintageWine.balanceOf(_msgSender()) >= transactionCostVINTAGEWINE,
+    //         "not enough VINTAGEWINE"
+    //     );
 
-        // raise the mint level and cost when this mint would place us in the next level
-        // if you mint in the cost transition you get a discount =)
-        if (
-            vintnersMintedWithVINTAGEWINE <=
-            VINTNERS_PER_VINTAGEWINE_MINT_LEVEL &&
-            vintnersMintedWithVINTAGEWINE + qty >
-            VINTNERS_PER_VINTAGEWINE_MINT_LEVEL
-        ) {
-            currentVINTAGEWINEMintCost = currentVINTAGEWINEMintCost * 2;
-        }
+    //     // raise the mint level and cost when this mint would place us in the next level
+    //     // if you mint in the cost transition you get a discount =)
+    //     if (
+    //         vintnersMintedWithVINTAGEWINE <=
+    //         VINTNERS_PER_VINTAGEWINE_MINT_LEVEL &&
+    //         vintnersMintedWithVINTAGEWINE + qty >
+    //         VINTNERS_PER_VINTAGEWINE_MINT_LEVEL
+    //     ) {
+    //         currentVINTAGEWINEMintCost = currentVINTAGEWINEMintCost * 2;
+    //     }
 
-        vintnersMintedWithVINTAGEWINE += qty;
+    //     vintnersMintedWithVINTAGEWINE += qty;
 
-        // spend vintageWine
-        vintageWine.burn(_msgSender(), transactionCostVINTAGEWINE);
+    //     // spend vintageWine
+    //     vintageWine.burn(_msgSender(), transactionCostVINTAGEWINE);
 
-        // mint vintners
-        _createVintners(qty, _msgSender());
-    }
+    //     // mint vintners
+    //     _createVintners(qty, _msgSender());
+    // }
 
     // Returns information for multiples vintners
     // function batchedVintnersOfOwner(

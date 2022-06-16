@@ -4,7 +4,7 @@
 # npx hardhat verify --network avaxfuji
 
 # npx hardhat run --network avaxfuji scripts/deployVintner.ts
-# npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, oracleAddress, BASE_URI)
+# npx hardhat verify --network avaxfuji (--constructor_args: coupenPublic, oracleAddress, BASE_URI)
 
 # npx hardhat run --network avaxfuji scripts/deployUpgrade.ts
 # npx hardhat verify --network avaxfuji (--constructor_args: vintageWindAddress, grapeTokenAddress, BASE_URI_UPGRADE)

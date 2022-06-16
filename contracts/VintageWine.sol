@@ -14,7 +14,7 @@ contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
 
     address public cellarAddress;
     address public wineryAddress;
-    address public vintnerAddress;
+    // address public vintnerAddress;
     address public upgradeAddress;
 
     bool public promotionalVintageWineMinted = false;
@@ -42,13 +42,13 @@ contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
      * vintner consumes vintageWine
      * vintner address can only be set once
      */
-    function setVintnerAddress(address _vintnerAddress) external onlyOwner {
-        require(
-            address(vintnerAddress) == address(0),
-            "vintner address already set"
-        );
-        vintnerAddress = _vintnerAddress;
-    }
+    // function setVintnerAddress(address _vintnerAddress) external onlyOwner {
+    //     require(
+    //         address(vintnerAddress) == address(0),
+    //         "vintner address already set"
+    //     );
+    //     vintnerAddress = _vintnerAddress;
+    // }
 
     function mintPromotionalVintageWine(address _to) external onlyOwner {
         require(
@@ -89,7 +89,7 @@ contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
     function mint(address _to, uint256 _amount) external {
         require(
             wineryAddress != address(0) &&
-                vintnerAddress != address(0) &&
+                // vintnerAddress != address(0) &&
                 cellarAddress != address(0) &&
                 upgradeAddress != address(0),
             "missing initial requirements"
@@ -103,13 +103,13 @@ contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
 
     function burn(address _from, uint256 _amount) external {
         require(
-            vintnerAddress != address(0) &&
+            // vintnerAddress != address(0) &&
                 cellarAddress != address(0) &&
                 upgradeAddress != address(0),
             "missing initial requirements"
         );
         require(
-            _msgSender() == vintnerAddress ||
+            // _msgSender() == vintnerAddress ||
                 _msgSender() == cellarAddress ||
                 _msgSender() == upgradeAddress,
             "msgsender does not have permission"
