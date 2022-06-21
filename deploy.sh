@@ -20,12 +20,16 @@
 # npx hardhat verify --network avaxfuji (--address: proxy address)
 
 # Update winery contract
-# npx hardhat run --network avaxfuji scripts/updateWinery.ts
+# npx hardhat run --network avaxfuji scripts/upgradeWinery.ts
 
 # Deply Grape for only test
 # npx hardhat run --network avaxfuji scripts/deployGrape.ts
 # npx hardhat verify --network avaxfuji
 
+
+
+# // Deploy ALl
+# npx hardhat run --network avaxfuji scripts/deployAll.t
 
 echo "DEPLOY"
 echo ""

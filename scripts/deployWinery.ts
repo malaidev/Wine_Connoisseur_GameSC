@@ -5,7 +5,7 @@ import {
   vintageWineAddress,
   grapeTokenAddress,
   cellarAddress,
-  wineryProgression,
+  wineryProgressionAddress,
 } from './address'
 
 async function main(): Promise<string> {
@@ -24,7 +24,7 @@ async function main(): Promise<string> {
       vintageWineAddress,
       grapeTokenAddress,
       cellarAddress,
-      wineryProgression,
+      wineryProgressionAddress,
     ],
   )
   await WineryDeployed.deployed()

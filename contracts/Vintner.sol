@@ -408,13 +408,10 @@ contract Vintner is ERC721, Ownable, Pausable {
      */
     function mintVintnerWithAVAX(uint256 qty) external payable whenNotPaused {
         require(mintingStartedAVAX(), "cannot mint right now");
-        uint256 userBalance = balanceOf(_msgSender());
+
+        require(qty > 0 && qty <= 20, "Exceeds number of mints allowed");
         require(
-            userBalance + qty > 0 && userBalance + qty <= 20,
-            "Exceeds number of mints allowed"
-        );
-        require(
-            (vintnersMintedWithAVAX + userBalance + qty) <=
+            (vintnersMintedWithAVAX + qty) <=
                 (NUM_VINTNERS - vintnersMintedWhitelist - PROMOTIONAL_VINTNERS),
             "Exceeds number of total mints allowed"
         );
