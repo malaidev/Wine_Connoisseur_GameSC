@@ -1,5 +1,8 @@
 # Deploy step
 
+# npx hardhat run --network avaxfuji scripts/deployMulticall.ts
+# npx hardhat verify --network avaxfuji
+
 # npx hardhat run --network avaxfuji scripts/deployVintageWine.ts
 # npx hardhat verify --network avaxfuji
 
@@ -29,7 +32,7 @@
 
 
 # // Deploy ALl
-# npx hardhat run --network avaxfuji scripts/deployAll.t
+# npx hardhat run --network avaxfuji scripts/deployAll.ts
 
 echo "DEPLOY"
 echo ""

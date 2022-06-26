@@ -17,7 +17,6 @@ async function main(): Promise<string> {
   const Winery = await ethers.getContractFactory('Winery')
   const WineryDeployed = await upgrades.deployProxy(
     Winery,
-    // initializer: 'initialize',
     [
       vintnerAddress,
       upgradeAddress,
@@ -26,6 +25,8 @@ async function main(): Promise<string> {
       cellarAddress,
       wineryProgressionAddress,
     ],
+    { kind: 'uups' },
+    // { initializer: 'initialize' },
   )
   await WineryDeployed.deployed()
 

@@ -428,6 +428,23 @@ describe('Wine Connoisseur game', function () {
 
       // await winery.connect(caller.address).stakeMany([], [6, 7, 8, 9, 10])
     })
+    it('Calculate fatigue', async function () {
+      const fatiguePerMinute = await winery.fatiguePerMinute(owner.address)
+      const fatigueSkillModifier =
+        await wineryProgression.getFatigueSkillModifier(owner.address)
+      const fatigueTuner = await winery.fatigueTuner()
+      const fatiguePerMinutewithModi =
+        await winery.getFatiguePerMinuteWithModifier(owner.address)
+      const getVintageWineAccrued = await winery.getVintageWineAccrued(
+        owner.address,
+      )
+
+      console.log('fatiguePerMinute', fatiguePerMinute)
+      console.log('fatigueSkillModifier', fatigueSkillModifier)
+      console.log('fatigueTuner', fatigueTuner)
+      console.log('fatiguePerMinutewithModi', fatiguePerMinutewithModi)
+      console.log('getVintageWineAccrued', getVintageWineAccrued)
+    })
     it('Get Staked Vintner and Tool for user', async function () {
       /**
        * @param

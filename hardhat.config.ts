@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv'
 
 import { HardhatUserConfig, task } from 'hardhat/config'
+import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-etherscan'
 import '@nomiclabs/hardhat-waffle'
 import '@openzeppelin/hardhat-upgrades'
@@ -179,6 +180,15 @@ const config: HardhatUserConfig = {
         },
       },
       'contracts/WineryProgression.sol': {
+        version: '0.8.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 100,
+          },
+        },
+      },
+      'contracts/Multicall.sol': {
         version: '0.8.11',
         settings: {
           optimizer: {

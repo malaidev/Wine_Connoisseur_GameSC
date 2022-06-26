@@ -1,4 +1,4 @@
-// Pizzeria
+// Winery
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
@@ -284,13 +284,20 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint256 fatigueSkillModifier = wineryProgression
             .getFatigueSkillModifier(_owner);
         return
-            fatiguePerMinute[_owner] *
-            fatigueSkillModifier *
-            (fatigueTuner / (100 * 100));
+            (fatiguePerMinute[_owner] * fatigueSkillModifier * fatigueTuner) /
+            (100 * 100);
     }
 
-    function _getMasterVintnerNumber(address _owner)
-        internal
+    // function getCommonVintnerNumber(address _owner)
+    //     public
+    //     view
+    //     returns (uint256)
+    // {
+    //     return numberOfStaked[_owner][0];
+    // }
+
+    function getMasterVintnerNumber(address _owner)
+        public
         view
         returns (uint256)
     {
@@ -361,7 +368,7 @@ contract Winery is Initializable, UUPSUpgradeable, OwnableUpgradeable {
         uint256 masterVintnerSkillModifier = wineryProgression
             .getMasterVintnerSkillModifier(
                 _owner,
-                _getMasterVintnerNumber(_owner)
+                getMasterVintnerNumber(_owner)
             );
 
         uint256 delta = endTimestamp - startTimeStamp[_owner];
