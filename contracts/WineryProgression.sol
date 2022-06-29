@@ -116,7 +116,7 @@ contract WineryProgression is Ownable {
     ];
     // uint256[4] public mafiaModSkillValue = [0,3,6,10];
 
-    uint256[8] public MAX_SKILL_LEVEL = [
+    uint256[7] public MAX_SKILL_LEVEL = [
         burnSkillValue.length - 1,
         fatigueSkillValue.length - 1,
         cellarSkillValue.length - 1,
@@ -133,7 +133,7 @@ contract WineryProgression is Ownable {
 
     mapping(address => uint256) public grapeDeposited; // address => total amount of grape deposited
     mapping(address => uint256) public skillPoints; // address => skill points available
-    mapping(address => uint256[8]) public skillsLearned; // address => skill learned.
+    mapping(address => uint256[7]) public skillsLearned; // address => skill learned.
 
     constructor(address _grape) {
         grape = IGrape(_grape);
@@ -387,7 +387,7 @@ contract WineryProgression is Ownable {
         )
     // uint256 mafiaMod
     {
-        uint256[8] memory skills = skillsLearned[_owner];
+        uint256[7] memory skills = skillsLearned[_owner];
 
         burn = skills[BURN_ID];
         fatigue = skills[FATIGUE_ID];
@@ -577,7 +577,6 @@ contract WineryProgression is Ownable {
             mastervintnerSkillId,
             upgradeSkillId,
             vintnerSkillId,
-            0,
             0
         ];
 

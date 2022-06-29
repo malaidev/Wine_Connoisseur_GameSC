@@ -284,12 +284,12 @@ describe('Wine Connoisseur game', function () {
           BigNumber.from(10).pow(18),
         ),
       ) // level 0 - 2, level 1 - 2, level 2 - 2
-      await vintageWine.approve(
-        upgrade.address,
-        BigNumber.from((3000 + 10000 + 25000) * mintAmount).mul(
-          BigNumber.from(10).pow(18),
-        ),
-      )
+      // await vintageWine.approve(
+      //   upgrade.address,
+      //   BigNumber.from((3000 + 10000 + 25000) * mintAmount).mul(
+      //     BigNumber.from(10).pow(18),
+      //   ),
+      // )
       await grape
         .connect(caller)
         .approve(
@@ -298,14 +298,14 @@ describe('Wine Connoisseur game', function () {
             BigNumber.from(10).pow(18),
           ),
         )
-      await vintageWine
-        .connect(caller)
-        .approve(
-          upgrade.address,
-          BigNumber.from((3000 + 10000 + 25000) * mintAmount).mul(
-            BigNumber.from(10).pow(18),
-          ),
-        )
+      // await vintageWine
+      //   .connect(caller)
+      //   .approve(
+      //     upgrade.address,
+      //     BigNumber.from((3000 + 10000 + 25000) * mintAmount).mul(
+      //       BigNumber.from(10).pow(18),
+      //     ),
+      //   )
       // 98 % of grape and vintageWine token will be burned when mint , 2% will be in Upgrade(Tools) contract
 
       // Level would be 0 ~ 2 , means there are 3 types of tools
