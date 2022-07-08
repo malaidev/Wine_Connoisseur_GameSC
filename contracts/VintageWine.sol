@@ -6,20 +6,20 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
-    uint256 public constant ONE_VINTAGEWINE = 1e18;
-    uint256 public constant NUM_PROMOTIONAL_VINTAGEWINE = 500_000;
-    uint256 public constant NUM_VINTAGEWINE_GRAPE_LP = 20_000_000;
+    // uint256 public constant ONE_VINTAGEWINE = 1e18;
+    // uint256 public constant NUM_PROMOTIONAL_VINTAGEWINE = 500_000;
+    // uint256 public constant NUM_VINTAGEWINE_USDC_LP = 50_000_000;
 
-    uint256 public NUM_VINTAGEWINE_AVAX_LP = 30_000_000;
+    // uint256 public NUM_VINTAGEWINE_AVAX_LP = 30_000_000;
 
     address public cellarAddress;
     address public wineryAddress;
     // address public vintnerAddress;
     address public upgradeAddress;
 
-    bool public promotionalVintageWineMinted = false;
-    bool public avaxLPVintageWineMinted = false;
-    bool public grapeLPVintageWineMinted = false;
+    // bool public promotionalVintageWineMinted = false;
+    // bool public avaxLPVintageWineMinted = false;
+    // bool public USDCLPVintageWineMinted = false;
 
     // ADMIN
 
@@ -50,39 +50,46 @@ contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
     //     vintnerAddress = _vintnerAddress;
     // }
 
-    function mintPromotionalVintageWine(address _to) external onlyOwner {
-        require(
-            !promotionalVintageWineMinted,
-            "promotional vintageWine has already been minted"
-        );
-        promotionalVintageWineMinted = true;
-        _mint(_to, NUM_PROMOTIONAL_VINTAGEWINE * ONE_VINTAGEWINE);
-    }
-
-    function mintAvaxLPVintageWine() external onlyOwner {
-        require(
-            !avaxLPVintageWineMinted,
-            "avax vintageWine LP has already been minted"
-        );
-        avaxLPVintageWineMinted = true;
-        _mint(owner(), NUM_VINTAGEWINE_AVAX_LP * ONE_VINTAGEWINE);
-    }
-
-    function mintGrapeLPVintageWine() external onlyOwner {
-        require(
-            !grapeLPVintageWineMinted,
-            "grape vintageWine LP has already been minted"
-        );
-        grapeLPVintageWineMinted = true;
-        _mint(owner(), NUM_VINTAGEWINE_GRAPE_LP * ONE_VINTAGEWINE);
-    }
-
-    function setNumVintageWineAvaxLp(uint256 _numVintageWineAvaxLp)
+    function mintVintageWine(address _to, uint256 amount)
         external
         onlyOwner
     {
-        NUM_VINTAGEWINE_AVAX_LP = _numVintageWineAvaxLp;
+        _mint(_to, amount);
     }
+
+    // function mintPromotionalVintageWine(address _to) external onlyOwner {
+    //     require(
+    //         !promotionalVintageWineMinted,
+    //         "promotional vintageWine has already been minted"
+    //     );
+    //     promotionalVintageWineMinted = true;
+    //     _mint(_to, NUM_PROMOTIONAL_VINTAGEWINE * ONE_VINTAGEWINE);
+    // }
+
+    // function mintAvaxLPVintageWine() external onlyOwner {
+    //     require(
+    //         !avaxLPVintageWineMinted,
+    //         "avax vintageWine LP has already been minted"
+    //     );
+    //     avaxLPVintageWineMinted = true;
+    //     _mint(owner(), NUM_VINTAGEWINE_AVAX_LP * ONE_VINTAGEWINE);
+    // }
+
+    // function mintUSDCLPVintageWine() external onlyOwner {
+    //     require(
+    //         !USDCLPVintageWineMinted,
+    //         "USDC vintageWine LP has already been minted"
+    //     );
+    //     USDCLPVintageWineMinted = true;
+    //     _mint(owner(), NUM_VINTAGEWINE_USDC_LP * ONE_VINTAGEWINE);
+    // }
+
+    // function setNumVintageWineAvaxLp(uint256 _numVintageWineAvaxLp)
+    //     external
+    //     onlyOwner
+    // {
+    //     NUM_VINTAGEWINE_AVAX_LP = _numVintageWineAvaxLp;
+    // }
 
     // external
 
@@ -104,14 +111,12 @@ contract VintageWine is ERC20("VintageWine", "VINTAGEWINE"), Ownable {
     function burn(address _from, uint256 _amount) external {
         require(
             // vintnerAddress != address(0) &&
-                cellarAddress != address(0) &&
-                upgradeAddress != address(0),
+            cellarAddress != address(0) && upgradeAddress != address(0),
             "missing initial requirements"
         );
         require(
             // _msgSender() == vintnerAddress ||
-                _msgSender() == cellarAddress ||
-                _msgSender() == upgradeAddress,
+            _msgSender() == cellarAddress || _msgSender() == upgradeAddress,
             "msgsender does not have permission"
         );
         _burn(_from, _amount);

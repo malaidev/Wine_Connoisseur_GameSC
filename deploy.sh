@@ -25,10 +25,8 @@
 # Update winery contract
 # npx hardhat run --network avaxfuji scripts/upgradeWinery.ts
 
-# Deply Grape for only test
-# npx hardhat run --network avaxfuji scripts/deployGrape.ts
-# npx hardhat verify --network avaxfuji
-
+# npx hardhat run --network avaxfuji scripts/deployVintageWineFountain.ts
+# npx hardhat verify --network avaxfuji 
 
 
 # // Deploy ALl

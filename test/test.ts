@@ -72,7 +72,7 @@ describe('Wine Connoisseur game', function () {
     // Deploy Vintner Contract
     receipt = await deployments.deploy('Vintner', {
       from: owner.address,
-      args: [couponPublic, oracle.address, BASE_URI],
+      args: [grape.address, couponPublic, oracle.address, BASE_URI],
       log: true,
     })
     vintner = await ethers.getContractAt('Vintner', receipt.address)
@@ -113,27 +113,23 @@ describe('Wine Connoisseur game', function () {
       )
       await grape.transferOperator(owner.address)
       // Mint Vintage for promote
-      await vintageWine.mintPromotionalVintageWine(owner.address)
+      await vintageWine.mintVintageWine(
+        owner.address,
+        BigNumber.from(50000000).mul(BigNumber.from(10).pow(18)),
+      )
       // Provide Avax-VintageWine pool
-      await vintageWine.mintAvaxLPVintageWine()
+      // await vintageWine.mintAvaxLPVintageWine()
       // provide Grape-VintageWine pool
-      await vintageWine.mintGrapeLPVintageWine()
+      // await vintageWine.mintUSDCLPVintageWine();
     })
     it('Should assign the total supply of Grape tokens to the owner', async function () {
       const ownerGrapeBalance = await grape.balanceOf(owner.address)
       expect(await grape.totalSupply()).to.equal(ownerGrapeBalance)
-      const ownerVintageWineBalance = await vintageWine.balanceOf(owner.address)
-      const promoteAmount = await vintageWine.NUM_PROMOTIONAL_VINTAGEWINE()
-      const AvaxLPAmount = await vintageWine.NUM_VINTAGEWINE_AVAX_LP()
-      const GrapeLPAmount = await vintageWine.NUM_VINTAGEWINE_GRAPE_LP()
-      expect(promoteAmount.add(AvaxLPAmount).add(GrapeLPAmount)).to.equal(
-        ownerVintageWineBalance.div(BigNumber.from(10).pow(18)),
-      )
     })
   })
   describe('Initialize contracts', function () {
     it('Set Start time', async function () {
-      await vintner.setStartTimeAVAX(Math.floor(Date.now() / 1000) + 20)
+      await vintner.setStartTime(Math.floor(Date.now() / 1000) + 20)
       await vintner.setStartTimeWhitelist(Math.floor(Date.now() / 1000) + 20)
       await upgrade.setStartTime(Math.floor(Date.now() / 1000) + 25)
       await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) + 25)
@@ -163,14 +159,14 @@ describe('Wine Connoisseur game', function () {
   describe('Vintner 721 token', function () {
     it('Mint Vintner ERC721 tokens', async function () {
       // Send vintageWine token to caller
-      await vintageWine.transfer(
+      await grape.transfer(
         caller.address,
-        BigNumber.from(200000).mul(BigNumber.from(10).pow(18)),
+        BigNumber.from(2000).mul(BigNumber.from(10).pow(18)),
       )
       // Check the caller balance
-      const callerBalance = await vintageWine.balanceOf(caller.address)
+      const callerBalance = await grape.balanceOf(caller.address)
       expect(callerBalance).to.equal(
-        BigNumber.from(200000).mul(BigNumber.from(10).pow(18)),
+        BigNumber.from(2000).mul(BigNumber.from(10).pow(18)),
       )
 
       // Mint vinter promotional - 1 ~ 50 would promote for owner ( only owner )
@@ -182,7 +178,15 @@ describe('Wine Connoisseur game', function () {
       await vintner.connect(caller).mintVintnerWithAVAX(5, {
         value: ethers.utils.parseEther('15'),
       }) // 1.5 avax
-      expect(await vintner.vintnersMintedWithAVAX()).to.equal(5)
+      await grape
+        .connect(caller)
+        .approve(
+          vintner.address,
+          BigNumber.from(1000).mul(BigNumber.from(10).pow(18)),
+        )
+      await vintner.connect(caller).mintVintnerWithGrape(5) // 1.5 avax
+
+      expect(await vintner.vintnerPublicMinted()).to.equal(10)
     })
     it('Mint Vintner for Whitelist', async function () {
       // Create Coupon for sign

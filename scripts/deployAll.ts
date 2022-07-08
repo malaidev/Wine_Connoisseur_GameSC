@@ -31,6 +31,7 @@ async function main(): Promise<{}> {
 
   const Vintner = await ethers.getContractFactory('Vintner')
   const Vintner_Deployed = await Vintner.deploy(
+    grapeTokenAddress,
     couponPublic,
     oracleAddress,
     BASE_URI,
