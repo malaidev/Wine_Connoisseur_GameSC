@@ -23,6 +23,7 @@ jobs:
       with:
         node-version: '16.x'
         registry-url: 'https://registry.npmjs.org'
-    - run: yarn install
-    - run: yarn compile
-    - run: yarn test
+#     - run: yarn install
+#     - run: yarn compile
+#     - run: yarn test
+      - run: npx hardhat coverage
