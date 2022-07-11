@@ -26,6 +26,7 @@ jobs:
     - run: yarn install
     - run: yarn compile
     - run: yarn coverage
+    - uses: codecov/codecov-action@v3
         
 
 
