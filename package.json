@@ -4,7 +4,7 @@
     "compile": "npx hardhat compile",
     "coverage": "env COVERAGE=true hardhat coverage",
     "test": "npx hardhat test",
-    "coverage": "npx hardhat coverage --network localhost"
+    "coverage": "npx hardhat coverage"
   },
   
   "dependencies": {
@@ -33,7 +33,6 @@
     "ethereum-waffle": "^3.0.0",
     "ethereumjs-util": "^7.1.5",
     "ethers": "^5.0.0",
-    "ganache-cli": "^6.12.2",
     "hardhat": "^2.9.6",
     "hardhat-gas-reporter": "^1.0.4",
     "prettier": "^2.3.2",
