@@ -129,15 +129,15 @@ describe('Wine Connoisseur game', function () {
   })
   describe('Initialize contracts', function () {
     it('Set Start time', async function () {
-      await vintner.setStartTime(Math.floor(Date.now() / 1000) + 5)
-      await vintner.setStartTimeWhitelist(Math.floor(Date.now() / 1000) + 5)
-      await upgrade.setStartTime(Math.floor(Date.now() / 1000) + 5)
-      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) + 5)
+      await vintner.setStartTime(Math.floor(Date.now() / 1000) )
+      await vintner.setStartTimeWhitelist(Math.floor(Date.now() / 1000) )
+      await upgrade.setStartTime(Math.floor(Date.now() / 1000) )
+      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) )
       await wineryProgression.setLevelStartTime(
-        Math.floor(Date.now() / 1000) + 5,
+        Math.floor(Date.now() / 1000) ,
       )
 
-      await winery.setStartTime(Math.floor(Date.now() / 1000) + 5)
+      await winery.setStartTime(Math.floor(Date.now() / 1000) )
     })
     it('Set initial values', async function () {
       await vintageWine.setCellarAddress(cellar.address)
