@@ -4,7 +4,7 @@
     "compile": "npx hardhat compile",
     "coverage": "env COVERAGE=true hardhat coverage",
     "test": "npx hardhat test",
-    "coverage": "npx hardhat coverage"
+    "coverage": "npx hardhat coverage --network localhost"
   },
   
   "dependencies": {
