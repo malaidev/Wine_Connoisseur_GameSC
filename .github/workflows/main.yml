@@ -8,11 +8,7 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
-
-env:
-  
-  PRIVATE_KEY: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1"
-  
+ 
 jobs:
   start-hardhat-node:
     runs-on: ubuntu-latest
