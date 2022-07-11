@@ -1,9 +1,9 @@
 {
   "name": "hardhat-project",
   "scripts": {
-    "compile": "hardhat compile",
+    "compile": "npx hardhat compile",
     "coverage": "env COVERAGE=true hardhat coverage",
-    "test": "hardhat test",
+    "test": "npx hardhat test"
   },
   
   "dependencies": {
