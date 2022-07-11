@@ -104,15 +104,15 @@ describe('Wine Connoisseur game', function () {
   describe('Deploy contract', async () => {
     it('should be deployed', async () => {})
     it('Set Start time', async function () {
-      await upgrade.setStartTime(Math.floor(Date.now() / 1000) +1)
-      await vintner.setStartTime(Math.floor(Date.now() / 1000) + 1)
-      await vintner.setStartTimeWhitelist(Math.floor(Date.now() / 1000) +1)
-      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) +1)
+      await upgrade.setStartTime(Math.floor(Date.now() / 1000) +5)
+      await vintner.setStartTime(Math.floor(Date.now() / 1000) + 5)
+      await vintner.setStartTimeWhitelist(Math.floor(Date.now() / 1000) +10)
+      await cellar.setStakeStartTime(Math.floor(Date.now() / 1000) +10)
       await wineryProgression.setLevelStartTime(
-        Math.floor(Date.now() / 1000 +1)
+        Math.floor(Date.now() / 1000 +10)
       )
 
-      await winery.setStartTime(Math.floor(Date.now() / 1000) +1)
+      await winery.setStartTime(Math.floor(Date.now() / 1000) +10)
     })
   })
   describe('Mint token', async () => {
