@@ -3,7 +3,8 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "coverage": "env COVERAGE=true hardhat coverage",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "coverage": "npx hardhat coverage"
   },
   
   "dependencies": {
